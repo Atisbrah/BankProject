@@ -1,0 +1,25 @@
+#randomQuoteContent {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Szebb betűtípus */
+    text-align: center;
+    color: #333; /* Sötétebb szöveg szín a jó kontraszthoz */
+    padding: 20px; /* Kis térköz */
+    max-width: 600px; /* Max szélesség */
+    background: rgba(255, 255, 255, 0.9); /* Halványfehér háttér, 90%-os opacitás */
+    border-radius: 8px; /* Lekerekített sarkok a szebb megjelenésért */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Finom árnyék a háttér körül */
+}
+
+#quoteText {
+    font-size: 1.5rem;
+    font-weight: 400; /* Fokozott vastagság */
+    line-height: 1.6;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Finom árnyék a szöveg mögött */
+}
+
+#quoteAuthor {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    color: #555; /* Halványabb szín az idéző szerzőjének */
+    font-style: italic; /* Dőlt stílus a szerzőnek */
+    font-weight: 300; /* Az idéző szerzője enyhén vékonyabb, mint a fő szöveg */
+}

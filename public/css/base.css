@@ -1,0 +1,51 @@
+html {
+    overflow-y: scroll;
+  }
+
+body {
+    background-image: url('../images/background.jpg');
+    background-size: cover; /* Ez a sor biztosítja, hogy a kép kitöltse az elemet */
+    background-position: center; /* Középre igazítja a képet */
+    background-repeat: no-repeat;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+}
+
+header {
+    background-color: #333;
+    color: #007bff;
+    padding: 10px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* Biztosítja, hogy a header a többi elem fölött legyen */
+}
+
+footer {
+    background-color: #333;
+    color: #007bff;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+main {
+    margin-top: 105px;
+    margin-bottom: 75px;
+    margin-left: 10px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center; /* Vízszintesen középre igazítás */
+    align-items: center;  
+    padding: 20px;
+    background-image: '../images/background.jpg';
+}

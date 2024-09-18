@@ -1,0 +1,94 @@
+/LA_BANK SPA
+    /public
+        /css
+            main.css               # Az összes CSS stílus egy helyen.
+        /js
+            main.js               # Az összes JavaScript kód egy helyen.
+        /images                   # Képek tárolása.
+        /htmlTemplates            # Az SPA-hoz szükséges HTML sablonok.
+        /api                      # Backend API végpontok.
+        index.php                 # Belépési pont a felhasználók számára.
+    /src
+        /controllers              # Az alkalmazás logikájának kezelése.
+        /models                   # Adatbázis műveletek és üzleti logika.
+        /views                    # Megjelenítéshez szükséges PHP fájlok.
+    /config
+        db.php                    # Adatbázis kapcsolat beállításai.
+        config.php                # Alkalmazás globális konfigurációi.
+    /logs
+        error.log                 # Hibanaplók tárolása.
+    /vendor                       # Composer által telepített csomagok.
+    .env                          # Környezeti változók (adatbázis jelszavak, API kulcsok).
+    composer.json                 # A Composer által kezelt PHP csomagok és függőségek.
+
+
+    Egy Single Page Application (SPA) elkészítése izgalmas kihívás, és ha lépésről lépésre haladsz, könnyebben átlátható lesz a folyamat. Itt van egy struktúrált útmutató a megvalósításhoz HTML, CSS, JavaScript, PHP és MySQL használatával:
+
+1. Tervezés
+Célkitűzés: Határozd meg, hogy mi lesz az oldal célja, milyen funkciókat szeretnél beleépíteni.
+Felhasználói élmény (UX) tervezés: Készíts vázlatot az oldal struktúrájáról, a navigációs elemekről és a felhasználói interakciókról.
+2. Környezet Beállítása
+Fejlesztői környezet: Telepítsd és konfiguráld a szükséges fejlesztői eszközöket, mint például egy szövegszerkesztőt (Visual Studio Code, Sublime Text) és helyi szervert (XAMPP, WAMP).
+3. HTML Szerkezet
+Alap HTML oldal létrehozása: Készíts egy alap HTML dokumentumot, ami tartalmazza az oldal struktúráját.
+SPA alapjainak megteremtése: Hozz létre egy index.html fájlt, ami az oldal kiinduló pontja lesz. Itt használd az alap HTML elemeket.
+4. CSS Stílusok
+Alapvető stílusok: Tervezd meg az oldal kinézetét, és írd meg a szükséges CSS kódokat. Használj CSS Grid-et vagy Flexbox-ot a layouthoz.
+Responsive dizájn: Gondoskodj róla, hogy az oldal mobilon és asztali gépen is jól nézzen ki. Használj media query-ket a különböző képernyőméretekhez.
+5. JavaScript & SPA Funkciók
+Alapvető JavaScript: Implementáld az oldal interaktív elemeit és eseménykezelőket.
+SPA keretrendszer választása: Válassz egy SPA keretrendszert, mint például React, Vue.js, vagy Angular, ha komolyabb funkcionalitást szeretnél.
+Routing: Implementáld az oldal navigációját, használj JavaScript-es routing könyvtárat a különböző nézetek kezelésére anélkül, hogy újra betöltenéd az oldalt.
+6. PHP Backend Fejlesztés
+PHP beállítása: Hozz létre PHP fájlokat az adatok kezelése és az API végpontok számára.
+Adatkezelés: Írj PHP kódot az adatok beolvasására, írására, frissítésére és törlésére. Használj PDO-t vagy MySQLi-t az adatbázis kapcsolatokhoz.
+7. MySQL Adatbázis
+Adatbázis létrehozása: Használj phpMyAdmin-t az adatbázis létrehozására és az adatbázis táblák definiálására.
+Tábla struktúrák: Tervezd meg és hozd létre az adatbázis táblákat a szükséges mezőkkel.
+Adatbázis kapcsolatok: Állítsd be a PHP-ben az adatbázis kapcsolatok kezelését.
+8. API Fejlesztés
+REST API: Készíts REST API végpontokat PHP-ben, amelyek lehetővé teszik az adatok lekérdezését és módosítását a JavaScript-ből.
+API tesztelés: Teszteld az API-t eszközökkel, mint a Postman, hogy biztos legyél benne, hogy működik.
+9. Integráció
+JavaScript és API kapcsolat: Használj AJAX-ot vagy Fetch API-t az adatok lekérdezésére és küldésére a backend API-val.
+SPA interakciók: Integráld a JavaScript kódot a felhasználói felülettel, hogy az adatok dinamikusan frissüljenek az oldalon.
+10. Tesztelés
+Funkcionalitás tesztelése: Teszteld az oldal működését különböző böngészőkben és eszközökön.
+Hibák keresése: Használj fejlesztői eszközöket a hibák és problémák azonosítására és javítására.
+11. Optimalizálás
+Teljesítmény optimalizálás: Ellenőrizd az oldal sebességét és teljesítményét, optimalizáld a JavaScript és CSS fájlokat.
+SEO: Bár SPA esetén SEO kihívásokkal szembesülhetsz, próbálj meg optimalizálni az oldalt a keresőmotorok számára.
+12. Közzététel
+Kód ellenőrzés: Ellenőrizd, hogy minden kód és konfiguráció rendben van.
+Szerver beállítás: Telepítsd az alkalmazást egy éles szerverre, például egy webtárhelyre.
+Domain és HTTPS: Állítsd be a domain nevet és a HTTPS-t, hogy biztosítsd az oldal biztonságát.
+13. Karbantartás
+Frissítések: Kövesd nyomon az oldal működését, és végezz el szükséges frissítéseket és javításokat.
+Felhasználói visszajelzések: Gyűjts visszajelzéseket a felhasználóktól és végezz el módosításokat az oldal élményének javítása érdekében.
+Ezeket a lépéseket követve hatékonyan és lépésről lépésre létrehozhatsz egy jól működő SPA-t, elkerülve a túlterheltséget és zökkenőmentesen haladva a projekt során.
+
+
+
+user authority: 0 blocked/deleted
+            1 logged in
+            2 admin
+
+card status: 0 inactive
+	 		 1 active
+	 		 2 blocked
+
+primary Card: 0 Secondary
+			  1 Primary
+
+
+- user (id PK, name, email, password, authority)
+- card (cardnumber PK, balance, user_id FK, pin, status, priority)
+- transaction (id PK, cardnumber FK, amount, statement, date)
+
+Ami hiányzik:
+- Tranzakciónál a Transfer megvalósítása
+- Adminnál az összes felhasználó kilistázása, és a felhasználók végén egy gomb, ami a hozzájuk tartozó összes bankkártyát kilistázza, és azok végén is egy gomb, ami az azokhoz tartozó tranzakciókat listázza ki.
+
+Amit tervezek:
+- Üzenőfal / Fórum
+

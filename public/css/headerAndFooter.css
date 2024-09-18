@@ -1,0 +1,185 @@
+/* Header konténer */
+.header-content {
+    display: flex;
+    justify-content: space-between; /* Balra és jobbra igazítás */
+    align-items: center; /* Vertikális középre igazítás */
+    padding: 20px; /* Térköz az elemek körül */
+    background: #EBEBEB;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Árnyék a header körül */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0; /* Biztosítja, hogy a header vége ne lógjon ki */
+    width: 100%; /* Teljes szélességű header */
+    box-sizing: border-box; /* Határok figyelembevétele a szélességben */
+    z-index: 1000;
+}
+
+/* Bal oldal, ahol a h1 cím van */
+.header-left h1 {
+    margin: 0;
+    font-size: 24px; /* Ugyanolyan betűméret mint a form h2 */
+    text-align: center; /* Középre igazított szöveg */
+}
+
+/* Középső navigáció */
+.header-middle {
+    text-align: center; /* Középre igazított navigáció */
+}
+
+#navbar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex; /* Flexbox a navigációs listaelemekhez */
+    gap: 15px; /* Távolság az elemek között */
+    flex-wrap: wrap; /* Ha kevés a hely, a sorokba törik */
+    justify-content: center; /* Középre igazított navigáció */
+    align-items: center; /* Elemek függőleges középre igazítása */
+}
+
+/* Navbar linkek */
+#navbar ul li a, #header-right a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 16px; /* Ugyanaz a méret mint a form gomb */
+    padding: 10px 15px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease; /* Áttűnés a hoverre */
+}
+
+#navbar ul li a:hover, #header-right a:hover {
+    background-color: #0056b3;
+    color: #fff;
+}
+
+/* Dropdown alapértelmezett stílus */
+.dropdown {
+    position: relative; /* A lenyíló tartalom pozíciójához */
+    display: inline-block; /* Sorközben jelenik meg */
+    vertical-align: middle; /* Függőleges középre igazítás */
+}
+
+.dropbtn {
+    color: white; /* Gomb szöveg színe */
+    padding: 10px 15px; /* Gomb térköz */
+    border: none; /* Nincs keret */
+    border-radius: 4px; /* Lekerekített sarkok */
+    font-size: 16px; /* Betűméret */
+    text-decoration: none; /* Nincs aláhúzás */
+    transition: background-color 0.3s ease; /* Áttűnés a hoverre */
+    cursor: default; /* Mutató stílusa (nem kattintható) */
+}
+
+/* Dropdown hover esetén megjelenő tartalom */
+.dropdown:hover .dropbtn {
+    background-color: #0056b3;
+    color: white; /* Hover szöveg szín */
+}
+
+/* A lenyíló tartalom alapértelmezett stílusa (rejtett) */
+.dropdown-content {
+    display: none; /* Alapértelmezett elrejtés */
+    position: absolute; /* Az elem relatív pozícióhoz igazítása */
+    background-color: #ffffff; /* Fehér háttérszín */
+    min-width: 160px; /* Minimális szélesség */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Árnyék */
+    z-index: 1; /* Rétegsorrend */
+    border-radius: 4px; /* Lekerekített sarkok a dropdownhoz is */
+    overflow: hidden; /* Ha túl nagy a tartalom, ne lógjon ki */
+}
+
+/* A lenyíló tartalom linkjeinek stílusa */
+.dropdown-content a {
+    color: #007bff; /* Szöveg színe */
+    padding: 12px 16px; /* Térköz */
+    text-decoration: none; /* Nincs aláhúzás */
+    display: block; /* Blokk stílus */
+    background-color: #ffffff; /* Fehér háttérszín */
+    transition: background-color 0.3s ease; /* Áttűnés a hoverre */
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd; /* Hover esetén háttérszín */
+    color: #0056b3; /* Hover esetén szöveg szín */
+}
+
+/* Dropdown megjelenítése hover esetén */
+.dropdown:hover .dropdown-content {
+    display: block; /* Megjelenítés */
+    top: 100%; /* Lenyíló tartalom megjelenítése a gomb alatt */
+    left: 0; /* Balra igazítva */
+}
+
+#header-left p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+/* Jobb oldal */
+.header-right {
+    text-align: right; /* Jobbra igazított szöveg */
+}
+
+/* Fixálás a footerhez */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0; /* Biztosítja, hogy a footer vége ne lógjon ki */
+    width: 100%;
+    height: 60px;
+    background: #EBEBEB;    
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center; /* Középre igazítja a footer-t */
+    align-items: center; /* Függőlegesen középre igazít */
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between; /* A három rész közötti térközt egyenletesen osztja el */
+    align-items: center; /* Függőlegesen középre igazítja az elemeket */
+    width: 100%;
+}
+
+.footer-left, .footer-middle, .footer-right {
+    flex: 1; /* Mindhárom rész egyenlő szélességet kap */
+    text-align: center; /* Középre igazítja a szöveget */
+}
+
+.footer-left {
+    text-align: left; /* Balra igazítja a tartalmat */
+}
+
+.footer-middle {
+    text-align: center; /* Középre igazítja a tartalmat */
+}
+
+.footer-right {
+    text-align: right; /* Jobbra igazítja a tartalmat */
+}
+
+
+/* Navbar linkek */
+#navbar ul li a, #header-right a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 10px 15px;
+    border-radius: 4px;
+    border: 1px solid #007bff; /* Kék körvonal a linkek körül */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    white-space: nowrap; /* Megakadályozza a szöveg több sorba törését */
+    overflow: hidden; /* Elrejti a túl hosszú szöveget */
+    text-overflow: ellipsis; /* Három ponttal jelzi, ha a szöveg nem fér el */
+    display: inline-block; /* Biztosítja, hogy a linkek csak annyi helyet foglaljanak el, amennyi szükséges */
+}
+
+#navbar ul li a:hover, #header-right a:hover {
+    background-color: #0056b3;
+    color: #fff;
+    border-color: #0056b3; /* Hover állapotban a körvonal színének változása */
+}
