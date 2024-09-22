@@ -17,7 +17,7 @@ $response = [
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $amount = trim($_POST['amount']);
     $pin = trim($_POST['pin']);
-    
+
     // Validate amount
     if (empty($amount)) {
         $response['errors']['amount'] = 'Amount is required.';
@@ -31,33 +31,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else if (strlen($pin) !== 4 || !preg_match('/^\d{4}$/', $pin)) {
         $response['errors']['pin'] = 'PIN Code must be a 4-digit number.';
     } else {
-        // Check PIN in the database
-        $userId = $_SESSION['user_id'];
-        $stmt = $connection->prepare("SELECT pin, cardnumber, balance FROM card WHERE user_id = ?");
+        // Ellenőrizzük a PIN kódot és a priority = 1 kártyát
+        $userId = $_SESSION['user_id']; // Bejelentkezett felhasználó ID-ja
+        $stmt = $connection->prepare("SELECT pin, cardnumber, balance FROM card WHERE user_id = ? AND priority = 1 LIMIT 1");
         $stmt->bind_param("i", $userId);
         $stmt->execute();
         $stmt->bind_result($storedPin, $cardNumber, $balance);
         $stmt->fetch();
         $stmt->close();
 
-        if (!password_verify($pin, $storedPin)) {
+        if (!$cardNumber) {
+            $response['errors']['general'] = 'No primary card found.';
+        } elseif (!password_verify($pin, $storedPin)) {
             $response['errors']['pin'] = 'Invalid PIN Code.';
-        } else if ($amount > $balance) {
-            $response['errors']['amount'] = 'Insufficient balance.';
+        } elseif ($balance <= 0) {
+            $response['errors']['general'] = 'Insufficient funds on the primary card.';
         }
     }
 
     if (empty($response['errors'])) {
-        // Convert the amount to negative for withdrawal
-        $amount = -floatval($amount);
-        
-        // Update the user's balance
-        $updateQuery = "UPDATE card SET balance = balance - ? WHERE user_id = ?";
+        // Frissítjük az egyenleget az elsődleges bankkártyán
+        $amount = -floatval($amount); // Mínusz jellel tároljuk az összeget
+        $updateQuery = "UPDATE card SET balance = balance + ? WHERE user_id = ? AND priority = 1";
         $updateStmt = $connection->prepare($updateQuery);
         $updateStmt->bind_param("di", $amount, $userId);
 
         if ($updateStmt->execute()) {
-            // Record the transaction with negative amount
+            // Rögzítjük a tranzakciót
             $transactionQuery = "INSERT INTO transaction (cardnumber, amount, statement, date) VALUES (?, ?, 'Withdraw', NOW())";
             $transactionStmt = $connection->prepare($transactionQuery);
             $transactionStmt->bind_param("sd", $cardNumber, $amount);

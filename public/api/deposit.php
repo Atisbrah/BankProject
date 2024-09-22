@@ -31,28 +31,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else if (strlen($pin) !== 4 || !preg_match('/^\d{4}$/', $pin)) {
         $response['errors']['pin'] = 'PIN Code must be a 4-digit number.';
     } else {
-        // Check PIN in the database
-        $userId = $_SESSION['user_id']; // Get the logged-in user's ID
-        $stmt = $connection->prepare("SELECT pin, cardnumber FROM card WHERE user_id = ?");
+        // Ellenőrizzük a PIN kódot és a priority = 1 kártyát
+        $userId = $_SESSION['user_id']; // Bejelentkezett felhasználó ID-ja
+        $stmt = $connection->prepare("SELECT pin, cardnumber FROM card WHERE user_id = ? AND priority = 1 LIMIT 1");
         $stmt->bind_param("i", $userId);
         $stmt->execute();
         $stmt->bind_result($storedPin, $cardNumber);
         $stmt->fetch();
         $stmt->close();
 
-        if (!password_verify($pin, $storedPin)) {
+        if (!$cardNumber) {
+            $response['errors']['general'] = 'No primary card found.';
+        } elseif (!password_verify($pin, $storedPin)) {
             $response['errors']['pin'] = 'Invalid PIN Code.';
         }
     }
 
     if (empty($response['errors'])) {
-        // Update the user's balance
-        $updateQuery = "UPDATE card SET balance = balance + ? WHERE user_id = ?";
+        // Frissítjük az egyenleget az elsődleges bankkártyán
+        $updateQuery = "UPDATE card SET balance = balance + ? WHERE user_id = ? AND priority = 1";
         $updateStmt = $connection->prepare($updateQuery);
         $updateStmt->bind_param("di", $amount, $userId);
 
         if ($updateStmt->execute()) {
-            // Record the transaction
+            // Rögzítjük a tranzakciót
             $transactionQuery = "INSERT INTO transaction (cardnumber, amount, statement, date) VALUES (?, ?, 'Deposit', NOW())";
             $transactionStmt = $connection->prepare($transactionQuery);
             $transactionStmt->bind_param("sd", $cardNumber, $amount);
