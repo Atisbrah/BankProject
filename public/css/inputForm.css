@@ -227,3 +227,21 @@ button.update-priority-btn:disabled {
     text-decoration: none;
     cursor: pointer;
 }
+
+.status-inactive {
+    background-color: rgba(255, 165, 0, 0.3); /* halvány narancs */
+    padding: 0.2em;
+    border-radius: 4px;
+}
+
+.status-active {
+    background-color: rgba(144, 238, 144, 0.3); /* halvány zöld */
+    padding: 0.2em;
+    border-radius: 4px;
+}
+
+.status-blocked {
+    background-color: rgba(255, 99, 71, 0.3); /* halvány piros */
+    padding: 0.2em;
+    border-radius: 4px;
+}

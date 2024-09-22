@@ -91,4 +91,9 @@ Ami hiányzik:
 
 Amit tervezek:
 - Üzenőfal / Fórum
+- Admin jóváhagyás
 
+
+2024.09.21: Transaction History módosítás
+2024.09.22: Header átméretezés
+            Inactive / Blocked elem nem fér hozzá a Transaction opciókhoz.

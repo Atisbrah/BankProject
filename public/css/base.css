@@ -19,14 +19,15 @@ body {
 }
 
 header {
-    background-color: #333;
+    background: #EBEBEB;
     color: #007bff;
     padding: 10px;
-    position: fixed;
-    top: 0;
+    position: relative; /* Módosítva relative-re */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 100%;
-    z-index: 1000; /* Biztosítja, hogy a header a többi elem fölött legyen */
+    z-index: 1000;
 }
+
 
 footer {
     background-color: #333;

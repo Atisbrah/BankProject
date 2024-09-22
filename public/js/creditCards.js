@@ -84,6 +84,7 @@ const changeCardPriority = (cardNumber) => {
     .then(data => {
         if (data.success) {
             loadCreditCards(); // Refresh the card list
+            checkSessionAndLoadHeader(); // Check session after status update
         } else {
             alert('Error updating card priority: ' + data.errors.join(', '));
         }
@@ -168,6 +169,7 @@ const changeCardStatus = async (cardNumber, status) => {
         if (data.success) {
             alert('Card status updated successfully.');
             loadCreditCards(); // Refresh the card list
+            checkSessionAndLoadHeader(); // Check session after status update
         } else {
             alert('Error updating card status: ' + data.errors.join(', '));
         }
@@ -182,3 +184,4 @@ const changeCardStatus = async (cardNumber, status) => {
 document.addEventListener('click', handleStatusChange);
 document.addEventListener('click', handlePriorityChange);
 
+import { checkSessionAndLoadHeader } from "./header.js";
