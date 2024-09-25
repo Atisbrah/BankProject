@@ -14,7 +14,7 @@
                         <div class="dropdown-content" id="transaction-dropdown">
                             <a href="#" data-load="depositForm.php">Deposit</a>
                             <a href="#" data-load="withdrawForm.php">Withdraw</a>
-                            <a href="#" data-load="transfer.php">Transfer</a>
+                            <a href="#" data-load="transferForm.php">Transfer</a>
                         </div>
                     </div>
                 </li>

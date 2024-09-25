@@ -15,66 +15,111 @@ $response = [
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    handlePostRequest($connection, $response);
+}
+
+echo json_encode($response);
+$connection->close();
+
+/**
+ * Handles the POST request for deposit processing.
+ */
+function handlePostRequest($connection, &$response) {
     $amount = trim($_POST['amount']);
     $pin = trim($_POST['pin']);
-    
-    // Validate amount
+    $userId = $_SESSION['user_id']; // Logged-in user ID
+
+    validateAmount($amount, $response);
+    validatePin($pin, $connection, $userId, $response);
+
+    if (empty($response['errors'])) {
+        processDeposit($connection, $userId, $amount, $response);
+    }
+}
+
+/**
+ * Validates the deposit amount.
+ */
+function validateAmount($amount, &$response) {
     if (empty($amount)) {
         $response['errors']['amount'] = 'Amount is required.';
     } else if (!is_numeric($amount) || $amount <= 0) {
         $response['errors']['amount'] = 'Amount must be a positive number.';
+    } else if ($amount > 9999999) {
+        $response['errors']['amount'] = 'Amount must not exceed 9.999.999.';
     }
+}
 
-    // Validate PIN
+/**
+ * Validates the PIN code and retrieves card details.
+ */
+function validatePin($pin, $connection, $userId, &$response) {
     if (empty($pin)) {
         $response['errors']['pin'] = 'PIN Code is required.';
     } else if (strlen($pin) !== 4 || !preg_match('/^\d{4}$/', $pin)) {
         $response['errors']['pin'] = 'PIN Code must be a 4-digit number.';
     } else {
-        // Ellenőrizzük a PIN kódot és a priority = 1 kártyát
-        $userId = $_SESSION['user_id']; // Bejelentkezett felhasználó ID-ja
-        $stmt = $connection->prepare("SELECT pin, cardnumber FROM card WHERE user_id = ? AND priority = 1 LIMIT 1");
-        $stmt->bind_param("i", $userId);
-        $stmt->execute();
-        $stmt->bind_result($storedPin, $cardNumber);
-        $stmt->fetch();
-        $stmt->close();
-
-        if (!$cardNumber) {
+        $cardDetails = getCardDetails($connection, $userId);
+        if (!$cardDetails) {
             $response['errors']['general'] = 'No primary card found.';
-        } elseif (!password_verify($pin, $storedPin)) {
+        } elseif (!password_verify($pin, $cardDetails['pin'])) {
             $response['errors']['pin'] = 'Invalid PIN Code.';
         }
     }
-
-    if (empty($response['errors'])) {
-        // Frissítjük az egyenleget az elsődleges bankkártyán
-        $updateQuery = "UPDATE card SET balance = balance + ? WHERE user_id = ? AND priority = 1";
-        $updateStmt = $connection->prepare($updateQuery);
-        $updateStmt->bind_param("di", $amount, $userId);
-
-        if ($updateStmt->execute()) {
-            // Rögzítjük a tranzakciót
-            $transactionQuery = "INSERT INTO transaction (cardnumber, amount, statement, date) VALUES (?, ?, 'Deposit', NOW())";
-            $transactionStmt = $connection->prepare($transactionQuery);
-            $transactionStmt->bind_param("sd", $cardNumber, $amount);
-
-            if ($transactionStmt->execute()) {
-                $response['success'] = true;
-                $response['redirect'] = 'randomQuote.php'; // Redirect after successful deposit
-            } else {
-                $response['errors']['general'] = 'An error occurred while recording the transaction. Please try again later.';
-            }
-
-            $transactionStmt->close();
-        } else {
-            $response['errors']['general'] = 'An error occurred while processing the deposit. Please try again later.';
-        }
-
-        $updateStmt->close();
-    }
 }
 
-echo json_encode($response);
-$connection->close();
+/**
+ * Retrieves the primary card details for the user.
+ */
+function getCardDetails($connection, $userId) {
+    $stmt = $connection->prepare("SELECT pin, cardnumber FROM card WHERE user_id = ? AND priority = 1 LIMIT 1");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $stmt->bind_result($storedPin, $cardNumber);
+    $stmt->fetch();
+    $stmt->close();
+
+    return $cardNumber ? ['pin' => $storedPin, 'cardnumber' => $cardNumber] : false;
+}
+
+/**
+ * Processes the deposit by updating the balance and recording the transaction.
+ */
+function processDeposit($connection, $userId, $amount, &$response) {
+    $updateQuery = "UPDATE card SET balance = balance + ? WHERE user_id = ? AND priority = 1";
+    $updateStmt = $connection->prepare($updateQuery);
+    $updateStmt->bind_param("di", $amount, $userId);
+
+    if ($updateStmt->execute()) {
+        recordTransaction($connection, $userId, $amount, $response);
+    } else {
+        $response['errors']['general'] = 'An error occurred while processing the deposit. Please try again later.';
+    }
+
+    $updateStmt->close();
+}
+
+/**
+ * Records the transaction in the database.
+ */
+function recordTransaction($connection, $userId, $amount, &$response) {
+    $cardDetails = getCardDetails($connection, $userId);
+    if (!$cardDetails) {
+        $response['errors']['general'] = 'No primary card found for transaction recording.';
+        return;
+    }
+
+    $transactionQuery = "INSERT INTO transaction (cardnumber, amount, statement, date) VALUES (?, ?, 'Deposit', NOW())";
+    $transactionStmt = $connection->prepare($transactionQuery);
+    $transactionStmt->bind_param("sd", $cardDetails['cardnumber'], $amount);
+
+    if ($transactionStmt->execute()) {
+        $response['success'] = true;
+        $response['redirect'] = 'randomQuote.php'; // Redirect after successful deposit
+    } else {
+        $response['errors']['general'] = 'An error occurred while recording the transaction. Please try again later.';
+    }
+
+    $transactionStmt->close();
+}
 ?>

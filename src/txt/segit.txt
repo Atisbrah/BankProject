@@ -93,4 +93,9 @@ Amit tervezek:
 - Üzenőfal / Fórum
 - Admin jóváhagyás
 
-2024.09.22: Deposit, withdraw korrekció.
+2024.09.25: Deposit, withdraw korrekció.
+
+A következőben a Felhasználó törlését szeretném megvalósítani. Adott egy gomb a personalInfo.php-ban: Delete User.
+
+Ha a felhasználó rákattint, akkor egy modal-nak kellene felugrania, hasonlóképp, mint a Change Password-nál, ahol kétszer kérjük el a jelszót. Ha mindkét jelszó helyes, akkor a felhasználónak a user táblában az authority-t 0-ra változtatjuk (Blocked/Deleted), és automatikusan kijelentkezünk.
+Ha a Delete User-nél megadom kétszer helyesen a jelszót és a Confirm gombra kattintok, megjelenik az alert, és utána fusson le a logout 

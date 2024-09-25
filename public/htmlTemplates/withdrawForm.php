@@ -3,7 +3,7 @@
         <h2>Withdraw</h2>
         <div class="form-group">
             <label for="amount">Amount</label>
-            <input type="text" id="amount" name="amount" placeholder="Please enter the desired amount.">
+            <input type="number" id="amount" name="amount" max="9999999" placeholder="Please enter the desired amount." required>
             <div class="errorMessage"></div>
         </div>
         <div class="form-group">
