@@ -1,25 +1,27 @@
-export const setupWithdrawForm = () => {
-    const withdrawForm = document.getElementById('withdrawForm');
-    if (!withdrawForm) { 
+export const setupTransferForm = () => {
+    const transferForm = document.getElementById('transferForm');
+    if(!transferForm) {
         return;
     }
 
-    withdrawForm.addEventListener('submit', e => {
+    transferForm.addEventListener('submit', e => {
         e.preventDefault();
 
-        const amount = withdrawForm.querySelector('#amount');
-        const pin = withdrawForm.querySelector('#pin');
+        const cardNumber = transferForm.querySelector('#cardNumber');
+        const statement = transferForm.querySelector('#statement');
+        const amount = transferForm.querySelector('#amount');
+        const pin = transferForm.querySelector('#pin');
 
-        validateWithdrawInputs(amount, pin);
+        validateTransferInputs(cardNumber, statement, amount, pin);
 
-        if (withdrawForm.querySelectorAll('.error').length > 0) {
+        if (transferForm.querySelectorAll('.error').length > 0) {
             return;
         }
 
-        const formData = new FormData(withdrawForm);
-        formData.append('transactionType', 'Withdraw'); // hozzáadja a tranzakció típusát
+        const formData = new FormData(transferForm);
+        formData.append('transactionType', 'Transfer');
 
-        fetch('api/withdraw.php', {
+        fetch('api/transfer.php', {
             method: 'POST',
             body: formData
         })
@@ -28,33 +30,48 @@ export const setupWithdrawForm = () => {
             try {
                 const data = JSON.parse(text); // Parse the text as JSON
                 if (data.success) {
-                    alert('Withdrawal successful.');
+                    alert('Transfer successful!');
                     loadContent(data.redirect); // Load the redirect page
                     checkSessionAndLoadHeader(); // Update the header
                 } else {
                     if (data.errors) {
                         for (const key in data.errors) {
-                            const errorElement = withdrawForm.querySelector(`#${key} ~ .errorMessage`);
+                            const errorElement = transferForm.querySelector(`#${key} ~ .errorMessage`);
                             if (errorElement) {
-                                errorElement.innerText = data.errors[key];
+                                errorElement.textContent = data.errors[key];
+                                // Reset the amount input if the error is specific to it
+                                if (key === 'amount') {
+                                    amount.value = ''; // Clear the amount field
+                                }
                             }
                         }
                     }
                 }
             } catch (error) {
                 console.error('Failed to parse JSON:', error);
-                console.error('Response text:', text); // Log the raw response text for debugging
+                console.error('Response text:', text);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-        });
+            alert('An error occurred while processing the transfer. Please try again.');
+        });        
     });
 };
 
-const validateWithdrawInputs = (amount, pin) => {
+const validateTransferInputs = (cardNumber, statement, amount, pin) => {
+    const cardNumberValue = cardNumber.value.trim();
     const amountValue = amount.value.trim();
     const pinValue = pin.value.trim();
+
+    // Validate the card number input
+    if (cardNumberValue === '') {
+        setError(cardNumber, 'Card Number is required.');
+    } else if (!/^\d{4}-\d{4}-\d{4}-\d{4}$/.test(cardNumberValue)) {
+        setError(cardNumber, 'Card Number must be in the format 0000-0000-0000-0000.');
+    } else {
+        clearError(cardNumber);
+    }
 
     // Validate the amount input
     if (amountValue === '') {
@@ -73,7 +90,7 @@ const validateWithdrawInputs = (amount, pin) => {
     } else {
         clearError(pin);
     }
-};
+}
 
 const clearError = (element) => {
     const errorElement = element.nextElementSibling;

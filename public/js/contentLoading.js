@@ -65,14 +65,17 @@
                         setupPersonalInfoButtons(); // Személyes információk gombjainak beállítása
                         break;
                     case 'depositForm.php':
-                        setupDepositForm(); // Deposit JS meghívása
+                        setupDepositForm(); 
                         break;
-                    // Add this to the `loadContent` function's switch statement
                     case 'withdrawForm.php':
-                        setupWithdrawForm(); // Withdraw JS meghívása
+                        setupWithdrawForm(); 
                         break; 
                     case 'transactionHistoryForm.php':
                         loadTransactionHistory();
+                        break;
+                    case 'transferForm.php':
+                        setupTransferForm();
+                        break;
                     default:
                         break;
                 }
@@ -144,3 +147,8 @@
     // Transaction History
 
     import { loadTransactionHistory } from './transactionHistory.js';
+
+    /* **************************************************************************** */
+    // Transfer
+
+    import { setupTransferForm } from './transferFunction.js';

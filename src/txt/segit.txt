@@ -93,9 +93,18 @@ Amit tervezek:
 - Üzenőfal / Fórum
 - Admin jóváhagyás
 
-2024.09.25: Deposit, withdraw korrekció.
+/* ************************************************************* */
 
 A következőben a Felhasználó törlését szeretném megvalósítani. Adott egy gomb a personalInfo.php-ban: Delete User.
 
 Ha a felhasználó rákattint, akkor egy modal-nak kellene felugrania, hasonlóképp, mint a Change Password-nál, ahol kétszer kérjük el a jelszót. Ha mindkét jelszó helyes, akkor a felhasználónak a user táblában az authority-t 0-ra változtatjuk (Blocked/Deleted), és automatikusan kijelentkezünk.
 Ha a Delete User-nél megadom kétszer helyesen a jelszót és a Confirm gombra kattintok, megjelenik az alert, és utána fusson le a logout 
+
+/* ************************************************************* */
+
+2024.09.26: Transfer már majdnem kész, hibakezelés kell amount input-ra.
+
+Extra ellenőrzés a transfer-re:
+- A bankkártya számnak léteznie kell az adatbázisban.
+- A bankkártya statusa = 1 kell, hogy legyen (Active). Ha status = 0, status = 2 (Inactive/Blocked), akkor ne lehessen rá pénzt utalni.
+- Ha a Statement üresen marad, akkor az üzenet: "Transfer from: " és a felhasználó neve.
