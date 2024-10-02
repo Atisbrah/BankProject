@@ -30,7 +30,7 @@ export const setupTransferForm = () => {
             try {
                 const data = JSON.parse(text); // Parse the text as JSON
                 if (data.success) {
-                    alert('Transfer successful!');
+                    alert('Transfer successful.');
                     loadContent(data.redirect); // Load the redirect page
                     checkSessionAndLoadHeader(); // Update the header
                 } else {
@@ -54,7 +54,6 @@ export const setupTransferForm = () => {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred while processing the transfer. Please try again.');
         });        
     });
 };
@@ -78,9 +77,13 @@ const validateTransferInputs = (cardNumber, statement, amount, pin) => {
         setError(amount, 'Amount is required.');
     } else if (isNaN(amountValue) || parseFloat(amountValue) <= 0) {
         setError(amount, 'Amount must be a positive number.');
+    } else if (amount > 9999999) {
+        setError(amount, 'Amount cannot exceed 9.999.999');
     } else {
         clearError(amount);
     }
+
+    
 
     // Validate the PIN input
     if (pinValue === '') {

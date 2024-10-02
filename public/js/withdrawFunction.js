@@ -61,6 +61,8 @@ const validateWithdrawInputs = (amount, pin) => {
         setError(amount, 'Amount is required.');
     } else if (isNaN(amountValue) || parseFloat(amountValue) <= 0) {
         setError(amount, 'Amount must be a positive number.');
+    } else if (amount > 9999999) {
+        setError(amount, 'Amount cannot exceed 9.999.999');
     } else {
         clearError(amount);
     }
