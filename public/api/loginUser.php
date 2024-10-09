@@ -31,21 +31,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Ha nincs hiba az inputban
     if (empty($response['errors'])) {
-        // Felhasználó lekérdezése email alapján
-        $query = "SELECT id, name, password FROM user WHERE email = ?";
+        $query = "SELECT id, name, password, authority FROM user WHERE email = ?";
         $stmt = $connection->prepare($query);
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
 
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($userId, $userName, $hashedPassword); // Lekérdezzük a nevet is
+            $stmt->bind_result($userId, $userName, $hashedPassword, $authority);
             $stmt->fetch();
 
             if (password_verify($password, $hashedPassword)) {
-                // Sikeres bejelentkezés
-                $_SESSION['user_id'] = $userId;  // Felhasználó ID mentése session-be
-                $_SESSION['user_name'] = $userName;  // Felhasználó neve mentése session-be
+                $_SESSION['user_id'] = $userId; 
+                $_SESSION['user_name'] = $userName;  
+                $_SESSION['user_authority'] = $authority;
                 
                 $response['success'] = true;
                 $response['redirect'] = 'randomQuote.php'; // Sikeres bejelentkezés utáni átirányítás

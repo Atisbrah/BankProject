@@ -21,7 +21,8 @@
                 <li><a href="#" data-load="creditCards.php">Credit Cards</a></li>
                 <li><a href="#" data-load="registerNewCard.php">New Card Registration</a></li>
                 <li><a href="#" data-load="personalInfo.php">Personal Info</a></li>
-            </ul>
+                <li id="adminButton"><a href="#" data-load="adminPageUsersForm.php" >Admin</a></li>
+                </ul>
         </nav>
     </div>
 

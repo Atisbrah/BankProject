@@ -16,53 +16,71 @@
     // Megakadályozza az alapértelmezett linkkattintási eseményt és betölti a dinamikus tartalmat
     // a linkhez tartozó 'data-load' attribútumban megadott oldal alapján.
     const handleLinkClick = (event) => {
-        event.preventDefault(); // Megakadályozza az alapértelmezett linkkattintási műveletet
-        const page = event.currentTarget.getAttribute('data-load'); // Lekéri az oldal URL-jét a 'data-load' attribútumból
-        loadContent(page); // Betölti a kiválasztott oldalt
+        event.preventDefault();
+    
+        const page = event.currentTarget.getAttribute('data-load');
+        const userId = event.currentTarget.getAttribute('data-userid'); // Ellenőrzi a data-userid attribútumot
+    
+        if (userId) {
+            // Ha van userId, akkor azzal együtt hívjuk meg a loadContent függvényt
+            loadContent(page, userId);
+        } else {
+            // Ha nincs userId, akkor a szokásos módon hívjuk meg a loadContent-et
+            loadContent(page);
+        }
     };
+    
 
-    // Megjelenít egy töltési üzenetet az oldalon, amíg az új tartalom betöltődik
     const showLoadingMessage = () => {
         updateContent('<p>Loading content, please wait...</p>');
     };
 
-    // Frissíti a 'content' elem tartalmát a megadott HTML kóddal
     const updateContent = (content) => {
         document.getElementById('content').innerHTML = content;
     };
 
-    // Megjelenít egy hibát az oldalon, a megadott hibaüzenettel
     const showError = (message) => {
         updateContent(`<p class="error">${message}</p>`);
     };
 
-    // Betölti a megadott oldalt, és végrehajtja az oldal-specifikus logikát
-    export const loadContent = (page) => {
+    export const loadContent = (page, userId = null) => {
         showLoadingMessage(); // Töltési üzenet megjelenítése
-
-        fetch(`htmlTemplates/${page}`) // Kért oldal tartalmának betöltése
-            .then(handleFetchResponse) // Válasz ellenőrzése
+    
+        let fetchUrl = `htmlTemplates/${page}`;
+        
+        // Ha van userId, akkor azt hozzáadjuk az URL-hez
+        if (userId) {
+            fetchUrl += `?userId=${userId}`;
+        }
+    
+        fetch(fetchUrl)
+            .then(handleFetchResponse)
             .then(data => {
-                updateContent(data); // Betöltött tartalom megjelenítése
+                if (typeof data === 'string') {
+                    updateContent(data); // Betöltött tartalom megjelenítése
+                } else {
+                    showError('Error loading content');
+                }
+    
                 setupContentLoadLinks(); // Linkek újra beállítása az új tartalomhoz
-
+    
                 // Oldal-specifikus logika kezelése
                 switch (page) {
                     case 'registerNewUser.php':
-                        setupRegistrationValidation(); // Regisztrációs űrlap validálása
+                        setupRegistrationValidation(); 
                         break;
                     case 'login.php':
-                        setupLoginValidation(); // Bejelentkezési űrlap validálása
+                        setupLoginValidation();
                         break;
                     case 'registerNewCard.php':
-                        setupNewCardValidation(); // Új kártya űrlap validálása
+                        setupNewCardValidation();
                         break;
-                    case 'creditCards.php':  // Kártyalistázás esetén
-                        loadCreditCards(); // Kártyák betöltése
+                    case 'creditCards.php':  
+                        loadCreditCards(); 
                         break;
                     case 'personalInfo.php':
-                        loadPersonalInfo(); // Személyes adatok betöltése
-                        setupPersonalInfoButtons(); // Személyes információk gombjainak beállítása
+                        loadPersonalInfo();
+                        setupPersonalInfoButtons(); 
                         break;
                     case 'depositForm.php':
                         setupDepositForm(); 
@@ -76,26 +94,47 @@
                     case 'transferForm.php':
                         setupTransferForm();
                         break;
+                    case 'adminPageUsersForm.php':
+                        loadAdminPageUsers();
+                        break;
+                    case 'adminPageTransactionsForm.php':
+                        loadAdminPageTransactions();
+                        break;
                     default:
                         break;
                 }
-
+    
                 checkSessionAndLoadHeader(); // Frissíti a fejlécet az új tartalom betöltése után
             })
             .catch(error => {
-                console.error('Something went wrong:', error); // Hibaüzenet a konzolra
-                showError('Error loading content.'); // Hibaüzenet megjelenítése az oldalon
+                console.error('Something went wrong:', error); 
+                showError('Error loading content.');
             });
-    };
+    };    
 
     // Ellenőrzi a fetch válasz státuszát. Ha a válasz nem sikeres (nem 2xx státusz), hibát dob.
     // Egyébként visszaadja a válasz szöveges tartalmát.
-    const handleFetchResponse = (response) => {
+    const handleFetchResponse = async (response) => {
         if (!response.ok) {
-            throw new Error(`Error loading content: ${response.statusText}`); // Hibát dob, ha a válasz nem sikeres
+            const errorText = await response.text(); // Get the response text
+            console.error(`Error loading content: ${response.statusText}`, errorText); // Log the error
+            throw new Error(`Error loading content: ${response.statusText}`);
         }
-        return response.text(); // Visszaadja a válasz szöveges tartalmát
+    
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            return response.json(); // Return JSON if content type is JSON
+        } else if (contentType && contentType.includes("text/html")) {
+            return response.text(); // Return HTML if content type is HTML
+        } else {
+            const errorText = await response.text(); // Log the non-JSON response
+            console.error('Expected JSON or HTML but received:', errorText);
+            throw new Error('Response is not JSON or HTML');
+        }
     };
+    
+    
+    
 
     /* **************************************************************************** */
     // Logout link
@@ -152,3 +191,8 @@
     // Transfer
 
     import { setupTransferForm } from './transferFunction.js';
+
+    /* **************************************************************************** */
+    // Admin page users
+
+    import { loadAdminPageUsers } from './adminFunction.js';

@@ -21,7 +21,7 @@
 
 <div id="pinModal" class="modal">
     <h2>Enter PIN</h2>
-    <input type="password" id="pinInput" placeholder="PIN Code">
+    <input type="password" id="pinInput" maxlength="4" inputmode="numeric" pattern="\d*">
     <button id="confirmPin">Confirm</button>
     <button id="cancelPin">Cancel</button>
 </div>

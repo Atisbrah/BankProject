@@ -149,3 +149,7 @@ footer {
     top: calc(100% - 1px); /* Kisebb távolság a gomb alatt */
     left: 0;
 }
+/*
+#adminButton {
+    display: none;
+}*/

@@ -10,33 +10,31 @@ header('Content-Type: application/json');
 
 $response = [
     'success' => false,
-    'cards' => [],
+    'users' => [],
     'errors' => []
 ];
 
-if (isset($_SESSION['user_id'])) {
-    $userId = $_SESSION['user_id'];
+// Ellenőrizd a user_authority kulcsot
+if (isset($_SESSION['user_id']) && $_SESSION['user_authority'] == 2) {
 
-    $query = "SELECT cardnumber, balance, status, priority FROM card WHERE user_id = ?";
-    
+    $query = "SELECT id, name, email, authority FROM user";
+
     $stmt = $connection->prepare($query);
-    $stmt->bind_param("i", $userId);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Ha vannak találatok
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $response['cards'][] = $row;
+            $response['users'][] = $row;
         }
         $response['success'] = true;
     } else {
-        $response['errors'][] = 'No credit cards found for this user.';
+        $response['errors'][] = 'No users found.';
     }
 
     $stmt->close();
 } else {
-    $response['errors'][] = 'User not logged in.';
+    $response['errors'][] = 'Unauthorized access.';
 }
 
 echo json_encode($response);
