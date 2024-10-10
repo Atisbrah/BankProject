@@ -139,25 +139,29 @@ function loadAdminPageCards(userId) {
     fetch(`api/adminPageCards.php?userId=${userId}`)
         .then(response => response.json())
         .then(jsonData => {
-            if (!jsonData.success) {
-                throw new Error('Error fetching cards: ' + jsonData.errors.join(', '));
-            }
             const tbody = document.querySelector('#cardTable tbody');
             if (tbody) {
-                tbody.innerHTML = '';
-                jsonData.cards.forEach(card => {
+                tbody.innerHTML = ''; // Kiürítjük a táblázatot
+                if (jsonData.success && jsonData.cards.length > 0) {
+                    jsonData.cards.forEach(card => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${card.cardnumber}</td>
+                            <td>${card.balance}</td>
+                            <td>${getStatusLabel(card.status)}</td>
+                            <td>${getPriorityLabel(card.priority)}</td>
+                            <td>
+                                <a href="#" data-load="adminPageTransactions.php" onclick="loadPageAndShowTransactions('${card.cardnumber}')">Show Transactions</a>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                } else {
+                    // Ha nincs kártya, akkor kiírjuk az üzenetet
                     const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${card.cardnumber}</td>
-                        <td>${card.balance}</td>
-                        <td>${getStatusLabel(card.status)}</td>
-                        <td>${getPriorityLabel(card.priority)}</td>
-                        <td>
-                            <a href="#" data-load="adminPageTransactions.php" onclick="loadPageAndShowTransactions('${card.cardnumber}')">Show Transactions</a>
-                        </td>
-                    `;
+                    row.innerHTML = `<td colspan="9">No cards found for this user.</td>`;
                     tbody.appendChild(row);
-                });
+                }
             } else {
                 console.error('Card table body not found.');
             }
@@ -166,6 +170,8 @@ function loadAdminPageCards(userId) {
             console.error('Fetch error:', error);
         });
 }
+
+
 
 window.loadAdminPageCards = loadAdminPageCards;
 
