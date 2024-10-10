@@ -1,326 +1,367 @@
-let InspectId;
-let InspectCardId; // Hozzáadva a globális változó
+let InspectId = null;
+let InspectCardId = null;
 
-/* *************************************************** */
-/* **** Admin Page Functions User **** */
 
 document.addEventListener('DOMContentLoaded', () => {
     const backToUserListLink = document.querySelector('[data-load="adminPageUsersForm.php"]');
     if (backToUserListLink) {
         backToUserListLink.addEventListener('click', (event) => {
-            event.preventDefault(); 
-            loadAdminPageUsersForm(); 
+            event.preventDefault();
+            loadAdminPageUsersForm();
         });
     }
 });
 
-export const loadAdminPageUsersForm = () => {
-    return new Promise((resolve, reject) => {
-        fetch('htmlTemplates/adminPageUsersForm.php') 
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to load user list form');
-                }
-                return response.text();
-            })
-            .then(html => {
-                const contentArea = document.querySelector('#content'); 
-                if (contentArea) {
-                    contentArea.innerHTML = html; 
-                    return loadAdminPageUsers();  // Return the Promise here
-                } else {
-                    reject('Content area not found');
-                }
-            })
-            .then(() => resolve())  // Resolve when users are loaded
-            .catch(error => {
-                console.error('Error loading admin page users form:', error);
-                reject(error);
-            });
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    const backToCardListLink = document.querySelector('[data-load="adminPageCardsForm.php"]');
+    if (backToCardListLink) {
+        backToCardListLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            loadAdminPageCardsForm();
+        });
+    }
+})
+
+// Function to load the user list form
+window.loadAdminPageUsersForm = async () => {
+    try {
+        const html = await fetchHtml('htmlTemplates/adminPageUsersForm.php');
+        const contentArea = document.querySelector('#content');
+        if (contentArea) {
+            contentArea.innerHTML = html;
+            await loadAdminPageUsers();
+        } else {
+            throw new Error('Content area not found');
+        }
+    } catch (error) {
+        console.error('Error loading admin page users form:', error);
+    }
 };
 
-export const loadAdminPageUsers = () => {
-    return new Promise((resolve, reject) => {
-        fetch('api/adminPageUsers.php')
-            .then(response => response.json())
-            .then(jsonData => {
-                if (!jsonData.success) {
-                    throw new Error('Error fetching users: ' + jsonData.errors.join(', '));
-                }
-                const tbody = document.querySelector('#userTable tbody');
-                if (tbody) {
-                    tbody.innerHTML = '';
-                    jsonData.users.forEach(user => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${user.id}</td>
-                            <td>${user.name}</td>
-                            <td>${user.email}</td>
-                            <td>${getAuthorityLabel(user.authority)}</td>
-                            <td>
-                                <a href="#" onclick="handleShowCards(${user.id})">Show Cards</a>
-                            </td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-                    resolve();  // Resolve the promise after loading users
-                } else {
-                    reject('User table body not found.');
-                }
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                reject(error);
+// Function to fetch and load users
+export const loadAdminPageUsers = async () => {
+    try {
+        const jsonData = await fetchJson('api/adminPageUsers.php');
+        const tbody = document.querySelector('#userTable tbody');
+        if (!tbody) throw new Error('User table body not found.');
+
+        tbody.innerHTML = ''; // Clear existing rows
+        if (jsonData.success) {
+            jsonData.users.forEach(user => {
+                tbody.appendChild(createUserRow(user));
             });
-    });
+        }
+    } catch (error) {
+        console.error('Error loading users:', error);
+    }
 };
 
-/* *************************************************** */
-/* **** Admin Page Functions Card **** */
+// Helper function to create user table row
+const createUserRow = (user) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${user.id}</td>
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td>${getAuthorityLabel(user.authority)}</td>
+        <td>
+            <select onchange="updateUserAuthority(${user.id}, this.value)">
+                <option value="0" ${user.authority == 0 ? 'selected' : ''}>Blocked/Deleted</option>
+                <option value="1" ${user.authority == 1 ? 'selected' : ''}>User</option>
+                <option value="2" ${user.authority == 2 ? 'selected' : ''}>Admin</option>
+            </select>
+        </td>
+        <td>
+            <a href="#" onclick="handleShowCards(${user.id})">Show Cards</a>
+        </td>
+    `;
+    return row;
+};
 
-function handleShowCards(userId) {
+// Update user authority
+window.updateUserAuthority = async (userId, newAuthority) => {
+    try {
+        const data = await postJson('api/updateUserAuthority.php', { userId, authority: newAuthority });
+        if (data.success) {
+            loadAdminPageUsers();
+        } else {
+            alert('Error updating authority: ' + data.errors.join(', '));
+        }
+    } catch (error) {
+        console.error('Error updating authority:', error);
+    }
+};
+
+// Load admin page cards form
+window.loadAdminPageCardsForm = async () => {
+    try {
+        const html = await fetchHtml('htmlTemplates/adminPageCardsForm.php');
+        const contentArea = document.querySelector('#content');
+        if (contentArea) {
+            contentArea.innerHTML = html;
+            loadBackToUserListButton();
+        } else {
+            throw new Error('Content area not found');
+        }
+    } catch (error) {
+        console.error('Error loading admin page cards form:', error);
+    }
+};
+
+// Load admin page transactions form
+window.loadAdminPageTransactionsForm = async () => {
+    try {
+        const html = await fetchHtml('htmlTemplates/adminPageTransactionsForm.php');
+        const contentArea = document.querySelector('#content');
+        if (contentArea) {
+            contentArea.innerHTML = html;
+            loadBackToCreditCardListButton();
+        } else {
+            throw new Error('Content area not found');
+        }
+    } catch (error) {
+        console.error('Error loading admin page transactions form:', error);
+    }
+};
+
+// Load admin page cards
+window.loadAdminPageCards = async (userId) => {
+    try {
+        const jsonData = await fetchJson(`api/adminPageCards.php?userId=${userId}`);
+        const tbody = document.querySelector('#cardTable tbody');
+        if (!tbody) throw new Error('Card table body not found.');
+
+        tbody.innerHTML = ''; // Clear existing rows
+        if (jsonData.success && jsonData.cards.length > 0) {
+            jsonData.cards.forEach(card => {
+                tbody.appendChild(createCardRow(card));
+            });
+        } else {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td colspan="9">No cards found for this user.</td>`;
+            tbody.appendChild(row);
+        }
+    } catch (error) {
+        console.error('Error loading cards:', error);
+    }
+};
+
+// Helper function to create card table row
+const createCardRow = (card) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${card.id}</td>
+        <td>${card.cardnumber}</td>
+        <td>${card.user_id}</td>
+        <td>${card.balance}</td>
+        <td>${getStatusLabel(card.status)}</td>
+        <td>
+            <select onchange="updateCardStatus(${card.id}, this.value)">
+                <option value="0" ${card.status == 0 ? 'selected' : ''}>Inactive</option>
+                <option value="1" ${card.status == 1 ? 'selected' : ''}>Active</option>
+                <option value="2" ${card.status == 2 ? 'selected' : ''}>Blocked</option>
+            </select>
+        </td>
+        <td>${getPriorityLabel(card.priority)}</td>
+        <td>
+            <select onchange="updateCardPriority(${card.id}, this.value)">
+                <option value="0" ${card.priority == 0 ? 'selected' : ''}>Primary</option>
+                <option value="1" ${card.priority == 1 ? 'selected' : ''}>Secondary</option>
+            </select>
+        </td>
+        <td>
+            <a href="#" onclick="handleShowTransactions('${card.cardnumber}')">Show Transactions</a>
+        </td>
+    `;
+    return row;
+};
+
+// Show cards for a user
+window.handleShowCards = (userId) => {
     InspectId = userId;
     loadAdminPageCardsForm().then(() => {
-        loadAdminPageCards(InspectId); // Kártyák betöltése az InspectId alapján
+        loadAdminPageCards(InspectId);
+    });
+};
+
+window.handleShowTransactions = (cardnumber) => {
+    InspectCardId = cardnumber;
+    loadAdminPageTransactionsForm().then(() => {
+        loadPageAndShowTransactions(InspectCardId);
     });
 }
 
-function loadAdminPageCardsForm() {
-    return new Promise((resolve, reject) => { 
-        fetch('htmlTemplates/adminPageCardsForm.php')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to load cards form');
-                }
-                return response.text(); 
-            })
-            .then(html => {
-                const contentArea = document.querySelector('#content');
-                if (contentArea) {
-                    contentArea.innerHTML = html;
-                    loadBackToUserListButton();
-                    resolve(); 
-                } else {
-                    reject('Content area not found');
-                }
-            })
-            .catch(error => {
-                console.error('Error loading admin page cards form:', error);
-                reject(error);
-            });
-    });
-}
+// Update card status
+window.updateCardStatus = async (cardId, newStatus) => {
+    try {
+        const data = await postJson('api/updateCardStatus.php', { cardId, status: newStatus });
+        if (data.success) {
+            loadAdminPageCards(InspectId);
+        } else {
+            alert('Error updating status: ' + data.errors.join(', '));
+        }
+    } catch (error) {
+        console.error('Error updating status:', error);
+    }
+};
 
-window.loadAdminPageCardsForm = loadAdminPageCardsForm;
+// Update card priority
+window.updateCardPriority = async (cardId, newPriority) => {
+    try {
+        const data = await postJson('api/updateCardPriority.php', { cardId, priority: newPriority });
+        if (data.success) {
+            loadAdminPageCards(InspectId);
+        } else {
+            alert('Error updating priority: ' + data.errors.join(', '));
+        }
+    } catch (error) {
+        console.error('Error updating priority:', error);
+    }
+};
 
+// Load transactions for a card
+window.loadPageAndShowTransactions = async (cardnumber) => {
+    InspectCardId = cardnumber;
+    loadBackToCreditCardListButton();
+    try {
+        const jsonData = await fetchJson(`api/adminPageTransactions.php?cardnumber=${cardnumber}`);
+        const tbody = document.querySelector('#transactionTable tbody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            if (jsonData.success && jsonData.transactions.length > 0) {
+                jsonData.transactions.forEach(transaction => {
+                    tbody.appendChild(createTransactionRow(transaction));
+                });
+            } else {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="4">No transactions found for this card.</td>`;
+                tbody.appendChild(row);
+            }
+        } else {
+            console.error('Transaction table body not found.');
+        }
+    } catch (error) {
+        console.error('Error fetching transactions:', error);
+    }
+};
+
+// Helper function to create transaction row
+const createTransactionRow = (transaction) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${transaction.id}</td>
+        <td>${transaction.cardnumber}</td>
+        <td>${transaction.amount}</td>
+        <td>${transaction.statement}</td>
+        <td>${transaction.date}</td>
+    `;
+    return row;
+};
+
+// Load the back button for user list
 function loadBackToUserListButton() {
     const miniHeaderRight = document.querySelector('#miniHeaderRight');
     if (miniHeaderRight) {
-        miniHeaderRight.innerHTML = `
-            <p><a href="#" data-load="adminPageUsersForm.php" onclick="resetInspectId()">Back to User List</a></p>
-        `;
-        
-        const backToUserListLink = miniHeaderRight.querySelector('[data-load="adminPageUsersForm.php"]');
-        if (backToUserListLink) {
-            backToUserListLink.addEventListener('click', (event) => {
-                event.preventDefault(); 
-                loadAdminPageUsersForm(); 
-            });
-        }
+        miniHeaderRight.innerHTML = `<p><a href="#" data-load="adminPageUsersForm.php" onclick="resetInspectId(); loadAdminPageUsersForm();">Back to User List</a></p>
+`;
     } else {
         console.error('#miniHeaderRight not found.');
     }
 }
-
-window.handleShowCards = handleShowCards;
-
-function loadAdminPageCards(userId) {
-    fetch(`api/adminPageCards.php?userId=${userId}`)
-        .then(response => response.json())
-        .then(jsonData => {
-            const tbody = document.querySelector('#cardTable tbody');
-            if (tbody) {
-                tbody.innerHTML = ''; // Kiürítjük a táblázatot
-                if (jsonData.success && jsonData.cards.length > 0) {
-                    jsonData.cards.forEach(card => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${card.cardnumber}</td>
-                            <td>${card.balance}</td>
-                            <td>${getStatusLabel(card.status)}</td>
-                            <td>${getPriorityLabel(card.priority)}</td>
-                            <td>
-                                <a href="#" data-load="adminPageTransactions.php" onclick="loadPageAndShowTransactions('${card.cardnumber}')">Show Transactions</a>
-                            </td>
-                        `;
-                        tbody.appendChild(row);
-                    });
-                } else {
-                    // Ha nincs kártya, akkor kiírjuk az üzenetet
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td colspan="9">No cards found for this user.</td>`;
-                    tbody.appendChild(row);
-                }
-            } else {
-                console.error('Card table body not found.');
-            }
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-        });
-}
-
-
-
-window.loadAdminPageCards = loadAdminPageCards;
-
-/* *************************************************** */
-/* **** Admin Page Functions Transaction **** */
 
 function loadBackToCreditCardListButton() {
     const miniHeaderRight = document.querySelector('#miniHeaderRight');
     if (miniHeaderRight) {
-        miniHeaderRight.innerHTML += `
-            <p><a href="#" data-load="adminPageCardsForm.php" onclick="loadAdminPageCardsFormWithUserId()">Back to Credit Card List</a></p>
-        `;
+        // Clear previous content
+        miniHeaderRight.innerHTML = '';
 
-        const backToCreditCardListLink = miniHeaderRight.querySelector('[data-load="adminPageCardsForm.php"]');
-        if (backToCreditCardListLink) {
-            backToCreditCardListLink.addEventListener('click', (event) => {
-                event.preventDefault(); 
-                loadAdminPageCardsForm(); 
-            });
-        }
+        // Create and append the back to user list link
+        const backLink = document.createElement('a');
+        backLink.href = '#';
+        backLink.textContent = 'Back to User List';
+        backLink.onclick = (event) => {
+            event.preventDefault();
+            resetInspectId();
+            loadAdminPageUsersForm();
+        };
+        miniHeaderRight.appendChild(backLink);
+        
+        // Create and append the show cards link
+        const showCardsLink = document.createElement('a');
+        showCardsLink.href = '#';
+        showCardsLink.textContent = 'Show Cards';
+        showCardsLink.onclick = (event) => {
+            event.preventDefault();
+            handleShowCards(InspectId); // Use InspectId directly
+        };
+        miniHeaderRight.appendChild(showCardsLink);
     } else {
         console.error('#miniHeaderRight not found.');
     }
 }
 
-function loadAdminPageCardsFormWithUserId() {
-    if (InspectId) {
-        loadAdminPageCardsForm().then(() => {
-            loadAdminPageCards(InspectId);  // Újratölti a kártyákat az InspectId alapján
-        });
-    } else {
-        console.error('InspectId not set.');
-    }
-}
 
-window.loadAdminPageCardsFormWithUserId = loadAdminPageCardsFormWithUserId;
+// Utility functions for fetching HTML and JSON
+const fetchHtml = async (url) => {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Failed to load HTML from ${url}`);
+    return response.text();
+};
 
-function loadPageAndShowTransactions(cardnumber) {
-    InspectCardId = cardnumber; 
-    loadAdminPageTransactionsForm().then(() => {
-        loadAdminPageTransactions(cardnumber); 
-    }).catch(error => {
-        console.error('Error loading transactions form:', error);
+const fetchJson = async (url) => {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Failed to load JSON from ${url}`);
+    return response.json();
+};
+
+const postJson = async (url, data) => {
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
     });
-}
+    if (!response.ok) throw new Error(`Failed to post JSON to ${url}`);
+    return response.json();
+};
 
-function loadAdminPageTransactionsForm() {
-    return new Promise((resolve, reject) => {
-        fetch('htmlTemplates/adminPageTransactionsForm.php')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to load transactions form');
-                }
-                return response.text();
-            })
-            .then(html => {
-                const contentArea = document.querySelector('#content');
-                if (contentArea) {
-                    contentArea.innerHTML = html;
-                    loadBackToCreditCardListButton();
-                    resolve();
-                } else {
-                    reject('Content area not found');
-                }
-            })
-            .catch(error => {
-                console.error('Error loading admin page transactions form:', error);
-                reject(error);
-            });
-    });
-}
-
-function loadAdminPageTransactions(cardnumber) {
-    fetch(`api/adminPageTransactions.php?cardnumber=${encodeURIComponent(cardnumber)}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(jsonData => {
-            if (!jsonData.success) {
-                throw new Error('Error fetching transactions: ' + jsonData.errors.join(', '));
-            }
-
-            const tbody = document.querySelector('#transactionTable tbody');
-            if (tbody) {
-                tbody.innerHTML = '';
-                jsonData.transactions.forEach(transaction => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${transaction.id}</td>
-                        <td>${transaction.cardnumber}</td>
-                        <td>${transaction.amount}</td>
-                        <td>${transaction.statement}</td>
-                        <td>${transaction.date}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            } else {
-                console.error('Transaction table body not found.');
-            }
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-        });
-}
-
-window.loadPageAndShowTransactions = loadPageAndShowTransactions;
-
-function handleShowTransactions(cardnumber) {
-    InspectCardId = cardnumber;
-    loadAdminPageTransactions(cardnumber); 
-}
-
-window.handleShowTransactions = handleShowTransactions;
-
-/* *************************************************** */
-/* **** Utility Functions **** */
-
-function getAuthorityLabel(authority) {
+// Utility functions for labels
+const getAuthorityLabel = (authority) => {
     switch (authority) {
         case 0: return 'Blocked/Deleted';
         case 1: return 'User';
         case 2: return 'Admin';
         default: return 'Unknown';
     }
-}
+};
 
-function getStatusLabel(status) {
+const getStatusLabel = (status) => {
     switch (status) {
         case 0: return 'Inactive';
         case 1: return 'Active';
         case 2: return 'Blocked';
         default: return 'Unknown';
     }
-}
+};
 
-function getPriorityLabel(priority) {
+const getPriorityLabel = (priority) => {
     switch (priority) {
         case 0: return 'Primary';
         case 1: return 'Secondary';
         default: return 'Unknown';
     }
-}
+};
 
+// Reset inspect ID
 function resetInspectId() {
     InspectId = null;
-    InspectCardId = null; // Reset InspectCardId is important here
+}
+
+// Reset inspect card ID
+function resetInspectCardId() {
+    InspectCardId = null;
 }
 
 window.resetInspectId = resetInspectId;
+window.resetInspectCardId = resetInspectCardId;

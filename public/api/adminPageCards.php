@@ -28,7 +28,7 @@ if (isset($_SESSION['user_id']) && $_SESSION['user_authority'] == 2) {
         $_SESSION['selected_user_id'] = $userId;
 
         // SQL lekérdezés a kártyák lekérésére
-        $query = "SELECT cardnumber, balance, status, priority FROM card WHERE user_id = ?";
+        $query = "SELECT id, cardnumber, user_id, balance, status, priority FROM card WHERE user_id = ?";
         $stmt = $connection->prepare($query);
         $stmt->bind_param('i', $userId);
         $stmt->execute();

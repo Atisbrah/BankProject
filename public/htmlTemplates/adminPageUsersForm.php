@@ -15,6 +15,7 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Authority</th>
+                <th>Change Authority</th>
                 <th>Credit Cards</th>
             </tr>
         </thead>
