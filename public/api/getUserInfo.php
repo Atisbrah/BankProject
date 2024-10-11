@@ -6,7 +6,8 @@ header('Content-Type: application/json');
 
 $response = [
     'user_name' => null,
-    'priority_card' => null
+    'priority_card' => null,
+    'authority' => null // Authority mező hozzáadása
 ];
 
 // Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
@@ -23,6 +24,17 @@ if (isset($_SESSION['user_name']) && isset($_SESSION['user_id'])) {
 
     if ($result->num_rows > 0) {
         $response['priority_card'] = $result->fetch_assoc(); // Lekért kártya adatok hozzáadása a válaszhoz
+    }
+
+    // Lekérjük a felhasználó authority-ját
+    $query = "SELECT authority FROM user WHERE id = ?";
+    $stmt = $connection->prepare($query);
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $response['authority'] = $result->fetch_assoc()['authority']; // Authority mező beállítása
     }
 
     $stmt->close();

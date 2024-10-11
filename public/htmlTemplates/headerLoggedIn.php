@@ -1,5 +1,5 @@
 <div class="header-content">
-<div id="header-left">
+    <div id="header-left">
         <p>Welcome!</p> 
     </div>
     
@@ -21,8 +21,8 @@
                 <li><a href="#" data-load="creditCards.php">Credit Cards</a></li>
                 <li><a href="#" data-load="registerNewCard.php">New Card Registration</a></li>
                 <li><a href="#" data-load="personalInfo.php">Personal Info</a></li>
-                <li id="adminButton"><a href="#" data-load="adminPageUsersForm.php" >Admin</a></li>
-                </ul>
+                <li id="admin-button-container" style="display: none;"><a href="#" data-load="adminPageUsersForm.php" id="admin-button">Admin</a></li>
+            </ul>
         </nav>
     </div>
 

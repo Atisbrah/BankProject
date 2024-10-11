@@ -31,7 +31,7 @@ export function logoutOnReload() {
             body: JSON.stringify({ action: 'logout' })
         })
         .catch(error => {
-            console.error('Hiba a kijelentkezés során:', error);
+            console.error('Error during log out:', error);
         });
     });
 }
@@ -39,25 +39,20 @@ export function logoutOnReload() {
 
 // Kijelentkezés kezelése kattintásra
 export const handleLogout = (event) => {
-    event.preventDefault(); // Megakadályozza a link alapértelmezett viselkedését
+    event.preventDefault();
 
     fetch('api/logout.php')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Frissíti a fejlécet kijelentkezés után
                 checkSessionAndLoadHeader(); 
-                // Véletlenszerű idézet betöltése
                 loadContent('randomQuote.php'); 
-                // Sikeres kijelentkezés értesítése
-                alert('Sikeresen kijelentkezett.');
+                alert('Log out successful.');
             } else {
-                // Hibaüzenet kiírása, ha a kijelentkezés nem sikerült
                 console.error('Kijelentkezés nem sikerült.');
             }
         })
         .catch(error => {
-            // Hibaüzenet kiírása, ha a kijelentkezés során hiba lép fel
             console.error('Hiba a kijelentkezés során:', error);
         });
 };
@@ -70,5 +65,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-import { checkSessionAndLoadHeader } from './header.js'; // Fejléc frissítése
-import { loadContent } from './contentLoading.js'; // Tartalom betöltése
+import { checkSessionAndLoadHeader } from './header.js'; 
+import { loadContent } from './contentLoading.js';
