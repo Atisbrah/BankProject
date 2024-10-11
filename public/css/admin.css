@@ -12,70 +12,66 @@ a {
     text-overflow: ellipsis;
 }
 
-/* Teljes nézetport háttér */
 .adminPageUsers, .adminPageCards, .adminPageTransactions {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
     padding: 20px;
-    margin: 0 auto; /* Középre igazítás */
+    margin: 0 auto;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
 }
 
-/* Mini fejlécek */
 .miniHeader {
     width: 100%;
-    margin-bottom: 20px; /* Térköz a mini fejlécek és a táblázat között */
-    text-align: center; /* Szöveg középre igazítása */
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 .miniHeader h2 {
     margin: 0;
-    font-size: 24px; /* Cím méretének növelése */
+    font-size: 24px;
 }
 
 .miniHeader p {
     margin: 10px 0;
 }
 
-/* Általános táblázat stílusok */
 .table {
     width: 100%;
-    max-width: 100%; /* Maximum szélesség a legkülső div alapján */
-    border-collapse: collapse; /* A határok összeolvadása */
-    margin-bottom: 20px; /* Térköz a táblázat alatt */
-    table-layout: auto; /* Automatikus táblázat elrendezés */
+    max-width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    table-layout: auto;
 }
 
-/* Sejtek szűkítése a szöveg átvágásához */
 .table th, .table td {
-    overflow: hidden; /* Túlfolyás elrejtése */
-    text-overflow: ellipsis; /* Háttér-elszínezés a szövegben */
-    white-space: nowrap; /* Szöveg elrejtése, ha túl hosszú */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .table thead {
-    background-color: #007bff; /* Fejléc háttérszíne */
-    color: #fff; /* Fejléc szövegszíne */
+    background-color: #007bff;
+    color: #fff;
 }
 
 .table th, .table td {
     padding: 10px;
-    border: 1px solid #ddd; /* Sejtek közötti határ */
-    text-align: center; /* Középre igazítás */
-    font-size: 16px; /* Betűméret növelése */
+    border: 1px solid #ddd;
+    text-align: center;
+    font-size: 16px;
 }
 
 .table tbody tr:nth-child(even) {
-    background-color: #f9f9f9; /* Csíkozás az olvashatóság növelése érdekében */
+    background-color: #f9f9f9;
 }
 
 .table tbody tr:hover {
-    background-color: #e6f7ff; /* Hover effektus */
+    background-color: #e6f7ff;
 }
 
 .table th {
@@ -83,10 +79,9 @@ a {
 }
 
 .table td {
-    color: #333; /* Szöveg színe */
+    color: #333;
 }
 
-/* Gomb stílusok a mini fejlécekben */
 .miniHeader a {
     padding: 10px 15px;
     margin: 5px;
@@ -94,62 +89,59 @@ a {
     border-radius: 4px;
     background-color: #007bff;
     color: #fff;
-    text-decoration: none; /* Linkek aláhúzásának eltávolítása */
+    text-decoration: none;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s; /* Színváltás lassítása */
+    transition: background-color 0.3s;
 }
 
 .miniHeader a:hover {
-    background-color: #0056b3; /* Hover effektus */
+    background-color: #0056b3;
 }
 
-/* Hibaüzenetek */
 #errorMessages {
     color: #ff0000;
     margin-bottom: 15px;
     text-align: center;
 }
 
-/* Egyéb stílusok a táblázatokhoz */
 .adminPageCards .table th:nth-child(5),
 .adminPageCards .table th:nth-child(6) {
-    width: 130px; /* Gombok szélessége */
+    width: 130px;
 }
 
 .adminPageCards .update-status-btn,
 .adminPageCards .update-priority-btn {
-    padding: 5px 10px; /* Belső margók */
-    background-color: #007bff; /* Gomb háttérszíne */
-    color: #fff; /* Gomb szövegszíne */
-    cursor: pointer; /* Mutató kurzor */
-    transition: background-color 0.3s; /* Színváltás lassítása */
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .adminPageCards .update-status-btn:hover,
 .adminPageCards .update-priority-btn:hover {
-    background-color: #0056b3; /* Hover effektus */
+    background-color: #0056b3;
 }
 
-/* Modal stílusok */
 .modal {
-    display: none; /* Alapértelmezett rejtett */
-    position: fixed; /* Maradjon a helyén */
-    z-index: 1; /* Legfelül */
+    display: none;
+    position: fixed;
+    z-index: 1;
     left: 0;
     top: 0;
-    width: 100%; /* Teljes szélesség */
-    height: 100%; /* Teljes magasság */
-    overflow: auto; /* Görgetés engedélyezése, ha szükséges */
-    background-color: rgba(0, 0, 0, 0.4); /* Fekete háttér, áttetszőséggel */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% a tetejétől és középre */
+    margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Lehet több vagy kevesebb, a képernyő méretétől függően */
+    width: 80%;
 }
 
 .close-button {
@@ -166,66 +158,62 @@ a {
     cursor: pointer;
 }
 
-/* Adminisztrátor oldal tranzakciók stílusai */
 .adminPageTransactions {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
     padding: 20px;
-    margin: 0 auto; /* Középre igazítás */
+    margin: 0 auto;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
 }
 
-/* Mini fejlécek */
 .miniHeader {
     width: 100%;
-    margin-bottom: 20px; /* Térköz a mini fejlécek és a táblázat között */
-    text-align: center; /* Szöveg középre igazítása */
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 .miniHeader h2 {
     margin: 0;
-    font-size: 24px; /* Cím méretének növelése */
+    font-size: 24px;
 }
 
-/* Általános táblázat stílusok */
 .table {
     width: 100%;
-    max-width: 100%; /* Maximum szélesség a legkülső div alapján */
-    border-collapse: collapse; /* A határok összeolvadása */
-    margin-bottom: 20px; /* Térköz a táblázat alatt */
-    table-layout: auto; /* Automatikus táblázat elrendezés */
+    max-width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    table-layout: auto;
 }
 
-/* Sejtek szűkítése a szöveg átvágásához */
 .table th, .table td {
-    overflow: hidden; /* Túlfolyás elrejtése */
-    text-overflow: ellipsis; /* Háttér-elszínezés a szövegben */
-    white-space: nowrap; /* Szöveg elrejtése, ha túl hosszú */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .table thead {
-    background-color: #007bff; /* Fejléc háttérszíne */
-    color: #fff; /* Fejléc szövegszíne */
+    background-color: #007bff;
+    color: #fff;
 }
 
 .table th, .table td {
     padding: 10px;
-    border: 1px solid #ddd; /* Sejtek közötti határ */
-    text-align: center; /* Középre igazítás */
-    font-size: 16px; /* Betűméret növelése */
+    border: 1px solid #ddd;
+    text-align: center;
+    font-size: 16px;
 }
 
 .table tbody tr:nth-child(even) {
-    background-color: #f9f9f9; /* Csíkozás az olvashatóság növelése érdekében */
+    background-color: #f9f9f9;
 }
 
 .table tbody tr:hover {
-    background-color: #e6f7ff; /* Hover effektus */
+    background-color: #e6f7ff;
 }
 
 .table th {
@@ -233,5 +221,5 @@ a {
 }
 
 .table td {
-    color: #333; /* Szöveg színe */
+    color: #333;
 }

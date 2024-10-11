@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 require_once "../../config/db.php";
 require_once "../../config/session.php";
 
-header('Content-Type: application/json'); // Beállítjuk a tartalom típusát JSON-ra
+header('Content-Type: application/json'); 
 
 $response = [
     'success' => false,

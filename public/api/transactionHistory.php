@@ -18,7 +18,6 @@ try {
     if (isset($_SESSION['user_id'])) {
         $userId = $_SESSION['user_id'];
 
-        // Lekérdezzük az aktuális (Primary) bankkártyát
         $cardQuery = "SELECT cardnumber FROM card WHERE user_id = ? AND priority = 1";
         $stmt = $connection->prepare($cardQuery);
         $stmt->bind_param("i", $userId);
@@ -29,14 +28,12 @@ try {
             $card = $cardResult->fetch_assoc();
             $cardNumber = $card['cardnumber'];
 
-            // Lekérdezzük a tranzakciókat az aktuális bankkártyához
             $transactionQuery = "SELECT id, amount, statement, date FROM transaction WHERE cardnumber = ?";
             $stmt = $connection->prepare($transactionQuery);
             $stmt->bind_param("s", $cardNumber);
             $stmt->execute();
             $transactionResult = $stmt->get_result();
 
-            // Ha vannak tranzakciók
             if ($transactionResult->num_rows > 0) {
                 while ($row = $transactionResult->fetch_assoc()) {
                     $response['transaction'][] = $row;

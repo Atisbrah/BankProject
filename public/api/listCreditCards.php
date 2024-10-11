@@ -24,7 +24,6 @@ if (isset($_SESSION['user_id'])) {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Ha vannak találatok
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $response['cards'][] = $row;

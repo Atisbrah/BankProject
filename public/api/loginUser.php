@@ -18,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
 
-    // Input ellenőrzés
     if (empty($email)) {
         $response['errors']['email'] = 'Email is required.';
     } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -29,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $response['errors']['password'] = 'Password is required.';
     }
 
-    // Ha nincs hiba az inputban
     if (empty($response['errors'])) {
         $query = "SELECT id, name, password, authority FROM user WHERE email = ?";
         $stmt = $connection->prepare($query);
@@ -42,15 +40,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->fetch();
 
             if (password_verify($password, $hashedPassword)) {
-                $_SESSION['user_id'] = $userId; 
-                $_SESSION['user_name'] = $userName;  
-                $_SESSION['user_authority'] = $authority;
-                
-                $response['success'] = true;
-                $response['redirect'] = 'randomQuote.php'; // Sikeres bejelentkezés utáni átirányítás
+                if ($authority == 0) {
+                    $response['errors']['authorization'] = 'Your account is not authorized to log in.';
+                } else {
+                    $_SESSION['user_id'] = $userId; 
+                    $_SESSION['user_name'] = $userName;  
+                    $_SESSION['user_authority'] = $authority;
+                    
+                    $response['success'] = true;
+                    $response['redirect'] = 'randomQuote.php';
+                }
             } else {
                 $response['errors']['password'] = 'Incorrect password.';
             }
+            
         } else {
             $response['errors']['email'] = 'No user found with this email address.';
         }

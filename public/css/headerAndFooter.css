@@ -2,21 +2,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px; /* Csökkentett padding, hogy jobban illeszkedjen */
+    padding: 10px 20px;
     background: #EBEBEB;
-    width: 100%; /* Maradjon teljes szélesség */
-    box-sizing: border-box; /* Határok figyelembevétele a szélességben */
+    width: 100%;
+    box-sizing: border-box;
 }
 
-
-/* Bal oldal, ahol a h1 cím van */
 .header-left h1 {
     margin: 0;
     font-size: 24px;
     text-align: center;
 }
 
-/* Középső navigáció */
 .header-middle {
     text-align: center;
 }
@@ -32,7 +29,6 @@
     align-items: center;
 }
 
-/* Navbar és dropdown linkek */
 #navbar ul li a,
 #header-right a,
 .dropbtn {
@@ -57,7 +53,6 @@
     border-color: #0056b3;
 }
 
-/* Dropdown tartalom */
 .dropdown {
     position: relative;
     display: inline-block;
@@ -87,19 +82,16 @@
     color: #0056b3;
 }
 
-/* Dropdown megjelenítése */
 .dropdown:hover .dropdown-content {
     display: block;
     top: 100%;
     left: 0;
 }
 
-/* Jobb oldal */
 .header-right {
     text-align: right;
 }
 
-/* Footer */
 footer {
     position: fixed;
     bottom: 0;
@@ -138,7 +130,6 @@ footer {
     text-align: right;
 }
 
-/* Header és footer p */
 #header-left p {
     margin: 5px 0;
     font-size: 14px;
@@ -146,10 +137,6 @@ footer {
 
 .dropdown:hover .dropdown-content {
     display: block;
-    top: calc(100% - 1px); /* Kisebb távolság a gomb alatt */
+    top: calc(100% - 1px);
     left: 0;
 }
-/*
-#adminButton {
-    display: none;
-}*/

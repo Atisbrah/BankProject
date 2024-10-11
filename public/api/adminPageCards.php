@@ -13,9 +13,8 @@ $response = [
     'errors' => []
 ];
 
-// Ellenőrizzük, hogy a felhasználó be van-e jelentkezve és admin jogosultsággal rendelkezik
 if (isset($_SESSION['user_id']) && $_SESSION['user_authority'] == 2) {
-    // Ellenőrizzük a user_id GET paramétert
+
     $userId = isset($_GET['userId']) ? intval($_GET['userId']) : 0;
 
     if ($userId === 0) {
@@ -27,7 +26,6 @@ if (isset($_SESSION['user_id']) && $_SESSION['user_authority'] == 2) {
     if ($userId > 0) {
         $_SESSION['selected_user_id'] = $userId;
 
-        // SQL lekérdezés a kártyák lekérésére
         $query = "SELECT id, cardnumber, user_id, balance, status, priority FROM card WHERE user_id = ?";
         $stmt = $connection->prepare($query);
         $stmt->bind_param('i', $userId);
@@ -49,12 +47,6 @@ if (isset($_SESSION['user_id']) && $_SESSION['user_authority'] == 2) {
 } else {
     $response['errors'][] = 'Unauthorized access.';
 }
-
-// Kérés naplózása
-error_log('Request User ID: ' . $userId);
-
-// Válasz naplózása
-error_log('Response: ' . json_encode($response));
 
 echo json_encode($response);
 $connection->close();

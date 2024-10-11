@@ -14,22 +14,17 @@ $response = [
     'redirect' => ''
 ];
 
-// Main function to handle the POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     handlePostRequest($connection, $response);
 }
 
-// Send response as JSON
 echo json_encode($response);
 $connection->close();
 
-/**
- * Main handler for the POST request.
- */
 function handlePostRequest($connection, &$response) {
     $amount = trim($_POST['amount']);
     $pin = trim($_POST['pin']);
-    $userId = $_SESSION['user_id']; // Bejelentkezett felhasználó ID-ja
+    $userId = $_SESSION['user_id']; 
 
     validateAmount($amount, $response);
     validatePin($pin, $response);
@@ -39,9 +34,6 @@ function handlePostRequest($connection, &$response) {
     }
 }
 
-/**
- * Validates the amount input.
- */
 function validateAmount($amount, &$response) {
     if (empty($amount)) {
         $response['errors']['amount'] = 'Amount is required.';
@@ -52,9 +44,6 @@ function validateAmount($amount, &$response) {
     }
 }
 
-/**
- * Validates the PIN input.
- */
 function validatePin($pin, &$response) {
     if (empty($pin)) {
         $response['errors']['pin'] = 'PIN Code is required.';
@@ -63,9 +52,6 @@ function validatePin($pin, &$response) {
     }
 }
 
-/**
- * Processes the withdrawal if the input is valid.
- */
 function processWithdrawal($connection, $userId, $amount, $pin, &$response) {
     $cardDetails = getPrimaryCardDetails($connection, $userId);
 
@@ -85,9 +71,6 @@ function processWithdrawal($connection, $userId, $amount, $pin, &$response) {
     }
 }
 
-/**
- * Retrieves the primary card details for the user.
- */
 function getPrimaryCardDetails($connection, $userId) {
     $stmt = $connection->prepare("SELECT pin, cardnumber, balance FROM card WHERE user_id = ? AND priority = 1 LIMIT 1");
     $stmt->bind_param("i", $userId);
@@ -99,11 +82,8 @@ function getPrimaryCardDetails($connection, $userId) {
     return $cardNumber ? [$storedPin, $cardNumber, $balance] : false;
 }
 
-/**
- * Updates the card balance and records the transaction.
- */
 function updateBalanceAndRecordTransaction($connection, $userId, $amount, $cardNumber, &$response) {
-    $amount = -floatval($amount); // Mínusz jellel tároljuk az összeget
+    $amount = -floatval($amount);
     $updateQuery = "UPDATE card SET balance = balance + ? WHERE user_id = ? AND priority = 1";
     $updateStmt = $connection->prepare($updateQuery);
     $updateStmt->bind_param("di", $amount, $userId);
@@ -117,9 +97,6 @@ function updateBalanceAndRecordTransaction($connection, $userId, $amount, $cardN
     $updateStmt->close();
 }
 
-/**
- * Records the transaction in the database.
- */
 function recordTransaction($connection, $cardNumber, $amount, &$response) {
     $transactionQuery = "INSERT INTO transaction (cardnumber, amount, statement, date) VALUES (?, ?, 'Withdraw', NOW())";
     $transactionStmt = $connection->prepare($transactionQuery);
@@ -127,7 +104,7 @@ function recordTransaction($connection, $cardNumber, $amount, &$response) {
 
     if ($transactionStmt->execute()) {
         $response['success'] = true;
-        $response['redirect'] = 'randomQuote.php'; // Redirect after successful withdrawal
+        $response['redirect'] = 'randomQuote.php';
     } else {
         $response['errors']['amount'] = 'An error occurred while recording the transaction. Please try again later.';
     }

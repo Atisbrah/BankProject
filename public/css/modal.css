@@ -1,6 +1,5 @@
-/* Modal doboz stílusa */
 .modal {
-    display: none; /* Alapértelmezett állapotban rejtve */
+    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -9,26 +8,25 @@
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 1001; /* Magasabb, mint az overlay */
+    z-index: 1001;
     width: 400px;
     height: auto;
     text-align: center;
 }
 
-/* Overlay (háttér) stílusa */
 .modal-overlay {
-    display: none; /* Kezdetben rejtve */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Szürke átlátszó háttér */
-    z-index: 1000; /* Overlay mögé kerül a modal */
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 }
 
 .modal-overlay.show {
-    display: block; /* Megjeleníti az overlay-t, ha a show osztályt hozzáadják */
+    display: block;
 }
 
 #passwordModal h2 {

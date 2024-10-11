@@ -1,20 +1,18 @@
 <?php
-session_start(); // Indítsa el a session-t
-require_once "../../config/db.php"; // Adatbázis kapcsolat
+session_start();
+require_once "../../config/db.php";
 
 header('Content-Type: application/json');
 
 $response = [
     'user_name' => null,
     'priority_card' => null,
-    'authority' => null // Authority mező hozzáadása
+    'authority' => null 
 ];
 
-// Ellenőrizzük, hogy a felhasználó be van-e jelentkezve
 if (isset($_SESSION['user_name']) && isset($_SESSION['user_id'])) {
     $response['user_name'] = $_SESSION['user_name'];
     
-    // Lekérjük az adott felhasználóhoz tartozó, legmagasabb prioritású bankkártyát
     $userId = $_SESSION['user_id'];
     $query = "SELECT cardnumber, balance, status FROM card WHERE user_id = ? AND priority = 1 LIMIT 1";
     $stmt = $connection->prepare($query);
@@ -23,10 +21,9 @@ if (isset($_SESSION['user_name']) && isset($_SESSION['user_id'])) {
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        $response['priority_card'] = $result->fetch_assoc(); // Lekért kártya adatok hozzáadása a válaszhoz
+        $response['priority_card'] = $result->fetch_assoc(); 
     }
 
-    // Lekérjük a felhasználó authority-ját
     $query = "SELECT authority FROM user WHERE id = ?";
     $stmt = $connection->prepare($query);
     $stmt->bind_param("i", $userId);
@@ -34,7 +31,7 @@ if (isset($_SESSION['user_name']) && isset($_SESSION['user_id'])) {
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        $response['authority'] = $result->fetch_assoc()['authority']; // Authority mező beállítása
+        $response['authority'] = $result->fetch_assoc()['authority'];
     }
 
     $stmt->close();

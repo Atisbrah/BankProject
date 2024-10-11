@@ -32,7 +32,7 @@ export const loadHeader = (template, callback) => {
         });
 };
 
-export const updateHeaderWithUserInfo = (userName, priorityCard, authority) => {
+const updateHeaderWithUserInfo = (userName, priorityCard, authority) => {
     const headerLeft = document.getElementById('header-left');
     const transactionButton = document.getElementById('transaction-button');
     const transactionDropdown = document.getElementById('transaction-dropdown');
@@ -47,41 +47,35 @@ export const updateHeaderWithUserInfo = (userName, priorityCard, authority) => {
         const formattedStatus = formatCardStatus(status);
         headerContent += `<p>${formattedCardNumber} | Balance: ${balance} Ft | Status: ${formattedStatus}</p>`;
 
+        // Only enable the transaction dropdown if the card status is active (1)
         if (status === 1) {
-            let hideTimeout; // Késleltetett eltűnéshez használt változó
+            let hideTimeout;
 
-            transactionButton.onclick = null; // Engedélyezzük a legördülő menüt
+            transactionButton.onclick = null; // Enable dropdown
             transactionButton.onmouseenter = () => {
-                clearTimeout(hideTimeout); // Töröljük a timeoutot, ha az egér újra belép
-                transactionDropdown.style.display = 'block'; // Megjelenítjük a legördülő listát
+                clearTimeout(hideTimeout);
+                transactionDropdown.style.display = 'block'; // Show dropdown
             };
             transactionButton.onmouseleave = () => {
                 hideTimeout = setTimeout(() => {
                     if (!transactionDropdown.matches(':hover')) {
                         transactionDropdown.style.display = 'none';
                     }
-                }, 100); // 0,5 másodperces késleltetés
+                }, 500); // 0.5 second delay
             };
             transactionDropdown.onmouseenter = () => {
-                clearTimeout(hideTimeout); // Töröljük a timeoutot, ha az egér belép a legördülő listába
+                clearTimeout(hideTimeout);
                 transactionDropdown.style.display = 'block';
             };
             transactionDropdown.onmouseleave = () => {
                 hideTimeout = setTimeout(() => {
                     transactionDropdown.style.display = 'none';
-                }, 100); 
+                }, 500);
             };
         } else {
-            // Letiltjuk a legördülő menüt, és modalt jelenítünk meg
             transactionDropdown.style.display = 'none'; 
-            transactionButton.onclick = function (event) {
-                event.preventDefault();
-                transactionModal.style.display = 'block';
-                document.querySelector('.modal-overlay').classList.add('show');
-            };
         }
 
-        // Modal bezárása
         const closeModal = () => {
             transactionModal.style.display = 'none';
             document.querySelector('.modal-overlay').classList.remove('show');
@@ -96,14 +90,14 @@ export const updateHeaderWithUserInfo = (userName, priorityCard, authority) => {
 
     headerLeft.innerHTML = headerContent;
 
-    // Ellenőrizd a jogosultságot és mutasd meg az Admin gombot, ha Authority = 2
     const adminButtonContainer = document.getElementById('admin-button-container');
     if (authority === 2) {
-        adminButtonContainer.style.display = 'block'; // Admin gomb megjelenítése
+        adminButtonContainer.style.display = 'block'; 
     } else {
-        adminButtonContainer.style.display = 'none'; // Admin gomb elrejtése
+        adminButtonContainer.style.display = 'none';
     }
 };
+
 
 /* **************************************************************************** */
     /* Bankkártya számának és státuszának formázása */

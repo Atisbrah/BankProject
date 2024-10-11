@@ -18,7 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newPassword = trim($_POST['new-password']);
     $confirmNewPassword = trim($_POST['confirm-new-password']);
 
-    // Input ellenőrzés
     if (empty($oldPassword)) {
         $response['errors']['old-password'] = 'Old password is required.';
     }
@@ -31,11 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $response['errors']['confirm-new-password'] = 'New passwords do not match.';
     }
 
-    // Ha nincs hiba az inputban
     if (empty($response['errors'])) {
         $userId = $_SESSION['user_id'];
 
-        // Régi jelszó ellenőrzése
         $query = "SELECT password FROM user WHERE id = ?";
         $stmt = $connection->prepare($query);
         $stmt->bind_param("i", $userId);
@@ -47,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->fetch();
 
             if (password_verify($oldPassword, $hashedPassword)) {
-                // Régi jelszó helyes, új jelszó hash-álása és frissítése
+
                 $hashedNewPassword = password_hash($newPassword, PASSWORD_BCRYPT);
 
                 $updateQuery = "UPDATE user SET password = ? WHERE id = ?";

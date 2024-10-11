@@ -21,7 +21,7 @@ if (isset($_SESSION['user_id']) && $_SESSION['user_authority'] == 2) {
         $query = "SELECT id, cardnumber, amount, statement, date FROM transaction WHERE cardnumber = ?";
         
         $stmt = $connection->prepare($query);
-        $stmt->bind_param('s', $cardNumber); // Assuming cardnumber is a string
+        $stmt->bind_param('s', $cardNumber); 
         $stmt->execute();
         $result = $stmt->get_result();
 

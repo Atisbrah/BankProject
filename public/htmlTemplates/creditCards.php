@@ -12,7 +12,6 @@
             </tr>
         </thead>
         <tbody>
-            <!-- JavaScript által generált sorok -->
         </tbody>
     </table>
 </div>

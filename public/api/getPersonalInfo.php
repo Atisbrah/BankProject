@@ -16,14 +16,12 @@ $response = [
 if (isset($_SESSION['user_id'])) {
     $userId = $_SESSION['user_id'];
 
-    // Lekérdezzük az aktuális felhasználó adatait
     $query = "SELECT id, name, email, authority FROM user WHERE id = ?";
     $stmt = $connection->prepare($query);
     $stmt->bind_param("i", $userId);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Ha van találat
     if ($result->num_rows > 0) {
         $response['user'] = $result->fetch_assoc();
         $response['success'] = true;

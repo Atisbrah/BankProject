@@ -16,7 +16,6 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = json_decode(file_get_contents('php://input'), true);
         $cardNumber = trim($data['cardNumber']);
-        $pin = isset($data['pin']) ? trim($data['pin']) : null;
 
         // Validate inputs
         if (empty($cardNumber) || !preg_match('/^\d{4}-\d{4}-\d{4}-\d{4}$/', $cardNumber)) {
@@ -25,8 +24,7 @@ try {
 
         $userId = $_SESSION['user_id'];
 
-        // Check PIN and card number
-        $checkQuery = "SELECT pin, status FROM card WHERE cardnumber = ? AND user_id = ?";
+        $checkQuery = "SELECT status FROM card WHERE cardnumber = ? AND user_id = ?";
         $stmt = $connection->prepare($checkQuery);
         $stmt->bind_param("si", $cardNumber, $userId);
         $stmt->execute();
@@ -38,11 +36,6 @@ try {
 
         $row = $result->fetch_assoc();
         
-        if ($row['status'] != 2 && (!isset($pin) || !password_verify($pin, $row['pin']))) {
-            throw new Exception('Invalid PIN.');
-        }
-
-        // Update card status using two separate SQL statements
         $setCardNumberQuery = "SET @cardnumber = ?";
         $stmt = $connection->prepare($setCardNumberQuery);
         $stmt->bind_param("s", $cardNumber);
@@ -56,7 +49,7 @@ try {
                 ELSE status
             END
             WHERE CONVERT(cardnumber USING utf8mb4) = CONVERT(@cardnumber USING utf8mb4)";
-        
+
         if ($connection->query($updateQuery)) {
             $response['success'] = true;
         } else {

@@ -21,13 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 echo json_encode($response);
 $connection->close();
 
-/**
- * Handles the POST request for deposit processing.
- */
 function handlePostRequest($connection, &$response) {
     $amount = trim($_POST['amount']);
     $pin = trim($_POST['pin']);
-    $userId = $_SESSION['user_id']; // Logged-in user ID
+    $userId = $_SESSION['user_id']; 
 
     validateAmount($amount, $response);
     validatePin($pin, $connection, $userId, $response);
@@ -37,9 +34,6 @@ function handlePostRequest($connection, &$response) {
     }
 }
 
-/**
- * Validates the deposit amount.
- */
 function validateAmount($amount, &$response) {
     if (empty($amount)) {
         $response['errors']['amount'] = 'Amount is required.';
@@ -50,9 +44,6 @@ function validateAmount($amount, &$response) {
     }
 }
 
-/**
- * Validates the PIN code and retrieves card details.
- */
 function validatePin($pin, $connection, $userId, &$response) {
     if (empty($pin)) {
         $response['errors']['pin'] = 'PIN Code is required.';
@@ -68,9 +59,6 @@ function validatePin($pin, $connection, $userId, &$response) {
     }
 }
 
-/**
- * Retrieves the primary card details for the user.
- */
 function getCardDetails($connection, $userId) {
     $stmt = $connection->prepare("SELECT pin, cardnumber FROM card WHERE user_id = ? AND priority = 1 LIMIT 1");
     $stmt->bind_param("i", $userId);
@@ -82,9 +70,6 @@ function getCardDetails($connection, $userId) {
     return $cardNumber ? ['pin' => $storedPin, 'cardnumber' => $cardNumber] : false;
 }
 
-/**
- * Processes the deposit by updating the balance and recording the transaction.
- */
 function processDeposit($connection, $userId, $amount, &$response) {
     $updateQuery = "UPDATE card SET balance = balance + ? WHERE user_id = ? AND priority = 1";
     $updateStmt = $connection->prepare($updateQuery);
@@ -99,9 +84,6 @@ function processDeposit($connection, $userId, $amount, &$response) {
     $updateStmt->close();
 }
 
-/**
- * Records the transaction in the database.
- */
 function recordTransaction($connection, $userId, $amount, &$response) {
     $cardDetails = getCardDetails($connection, $userId);
     if (!$cardDetails) {
@@ -115,7 +97,7 @@ function recordTransaction($connection, $userId, $amount, &$response) {
 
     if ($transactionStmt->execute()) {
         $response['success'] = true;
-        $response['redirect'] = 'randomQuote.php'; // Redirect after successful deposit
+        $response['redirect'] = 'randomQuote.php';
     } else {
         $response['errors']['general'] = 'An error occurred while recording the transaction. Please try again later.';
     }

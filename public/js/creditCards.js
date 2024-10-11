@@ -67,13 +67,22 @@ const getPriorityProperties = (priority) => {
     };
 };
 
-const handleStatusChange = (event) => {
+const handleStatusChange = async (event) => {
     if (event.target && event.target.classList.contains('update-status-btn')) {
         const cardnumber = event.target.dataset.cardnumber;
-        const status = event.target.closest('tr').children[2].textContent === 'Inactive' ? 0 : 1;
+        const statusText = event.target.textContent; 
+        let status;
+
+        if (statusText === 'Activate Card') {
+            status = 0; 
+        } else if (statusText === 'Block Card') {
+            status = 1; 
+        }
+
         changeCardStatus(cardnumber, status);
     }
 };
+
 
 const handlePriorityChange = (event) => {
     if (event.target && event.target.classList.contains('update-priority-btn')) {
@@ -102,17 +111,11 @@ const changeCardPriority = async (cardNumber) => {
 };
 
 const changeCardStatus = async (cardNumber, status) => {
-    let pin = null;
-    if (status === 0 || status === 1) {
-        pin = await showPinModal();
-        if (pin === null) return;
-    }
-
     try {
         const response = await fetch('api/changeCardStatus.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ cardNumber, pin })
+            body: JSON.stringify({ cardNumber }) 
         });
         const data = await response.json();
         if (data.success) {

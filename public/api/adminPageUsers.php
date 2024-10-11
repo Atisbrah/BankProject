@@ -14,7 +14,6 @@ $response = [
     'errors' => []
 ];
 
-// Ellenőrizd a user_authority kulcsot
 if (isset($_SESSION['user_id']) && $_SESSION['user_authority'] == 2) {
 
     $query = "SELECT id, name, email, authority FROM user";
