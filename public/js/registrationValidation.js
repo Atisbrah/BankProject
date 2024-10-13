@@ -64,13 +64,17 @@ const validateField = (field, emptyMessage, validationFn, invalidMessage) => {
 const validateInputs = (name, email, password, confirmPassword) => {
     validateField(name, 'Name is required.', name => name.length >= 3, 'Name must be at least 3 characters long.');
     validateField(email, 'Email is required.', isValidEmail, 'Provide a valid email address.');
-    validateField(password, 'Password is required.', value => value.length >= 6, 'Password must be at least 6 characters.');
+    validateField(password, 'Password is required.', value => validatePassword(value), 'Password must be at least 6 characters long, contain at least one uppercase letter and one number.');
     validateField(confirmPassword, 'Password confirmation is required.', value => value === password.value.trim(), "Passwords don't match.");
 };
 
+const validatePassword = (password) => {
+    const minLength = 6;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    return password.length >= minLength && hasUppercase && hasNumber;
+};
 
-
-import { isValidEmail, setError, setSuccess } from './formUtils.js';
-
-import { loadContent } from './contentLoading.js';
-import { checkSessionAndLoadHeader } from './header.js';
+import { setError, setSuccess, isValidEmail } from "./formUtils.js";
+import { loadContent } from "./contentLoading.js";
+import { checkSessionAndLoadHeader } from "./header.js";

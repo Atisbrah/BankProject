@@ -73,3 +73,7 @@ const validateCardInputs = (cardNumber, pin, confirmPin) => {
         setSuccess(confirmPin);
     }
 };
+
+import { setError, setSuccess } from "./formUtils.js";
+import { checkSessionAndLoadHeader } from "./header.js";
+import { loadContent } from "./contentLoading.js";

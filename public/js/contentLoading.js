@@ -100,6 +100,12 @@
                     case 'adminPageTransactionsForm.php':
                         loadAdminPageTransactions();
                         break;
+                    case 'changePasswordForm.php': 
+                        changePassword();
+                        break;
+                    case 'deleteUserForm.php': 
+                        deleteUser();
+                        break;
                     default:
                         break;
                 }
@@ -191,3 +197,13 @@
     // Admin page users
 
     import { loadAdminPageUsers } from './adminFunction.js';
+
+    /* **************************************************************************** */
+    // Change password
+
+    import { changePassword } from './changePasswordFunction.js';
+
+    /* **************************************************************************** */
+    // Delete user
+
+    import { deleteUser } from './deleteUserFunction.js';
