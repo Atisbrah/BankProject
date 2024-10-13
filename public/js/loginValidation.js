@@ -24,10 +24,14 @@ export const setupLoginValidation = () => {
         .then(data => {
             if (data.success) {
                 alert('Login successful.');
-                checkSessionAndLoadHeader(); // Frissíti a fejlécet bejelentkezés után
-                loadContent(data.redirect); // Töltse be a megfelelő oldalt
+                checkSessionAndLoadHeader(); 
+                loadContent(data.redirect); 
             } else {
                 if (data.errors) {
+                    if (data.errors.authorization) {
+                        alert(data.errors.authorization);
+                    }
+
                     for (const key in data.errors) {
                         const errorElement = loginForm.querySelector(`#${key} ~ .errorMessage`);
                         if (errorElement) {
@@ -42,6 +46,7 @@ export const setupLoginValidation = () => {
         });
     });
 };
+
 
 const validateLoginInputs = (email, password) => {
     const emailValue = email.value.trim();

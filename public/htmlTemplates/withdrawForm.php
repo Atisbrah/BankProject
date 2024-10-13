@@ -1,5 +1,5 @@
-<div class="inputForm">
-    <form method="post" id="withdrawForm">
+<div class = "inputForm">
+    <form method = "post" id = "withdrawForm">
         <h2>Withdraw</h2>
         <div class="form-group">
             <label for="amount">Amount</label>

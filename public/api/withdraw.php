@@ -27,10 +27,10 @@ function handlePostRequest($connection, &$response) {
     $userId = $_SESSION['user_id']; 
 
     validateAmount($amount, $response);
-    validatePin($pin, $response);
+    validatePin($pin, $connection, $userId, $response); // Corrected the parameter order
 
     if (empty($response['errors'])) {
-        processWithdrawal($connection, $userId, $amount, $pin, $response);
+        processWithdrawal($connection, $userId, $amount, $response);
     }
 }
 
@@ -44,71 +44,64 @@ function validateAmount($amount, &$response) {
     }
 }
 
-function validatePin($pin, &$response) {
+function validatePin($pin, $connection, $userId, &$response) {
     if (empty($pin)) {
         $response['errors']['pin'] = 'PIN Code is required.';
     } else if (strlen($pin) !== 4 || !preg_match('/^\d{4}$/', $pin)) {
         $response['errors']['pin'] = 'PIN Code must be a 4-digit number.';
-    }
-}
-
-function processWithdrawal($connection, $userId, $amount, $pin, &$response) {
-    $cardDetails = getPrimaryCardDetails($connection, $userId);
-
-    if (!$cardDetails) {
-        $response['errors']['amount'] = 'No primary card found.';
-        return;
-    }
-
-    list($storedPin, $cardNumber, $balance) = $cardDetails;
-
-    if (!password_verify($pin, $storedPin)) {
-        $response['errors']['pin'] = 'Invalid PIN Code.';
-    } elseif ($balance <= 0 || $balance < $amount) {
-        $response['errors']['amount'] = 'Insufficient funds on the primary card.';
     } else {
-        updateBalanceAndRecordTransaction($connection, $userId, $amount, $cardNumber, $response);
+        $cardDetails = getCardDetails($connection, $userId);
+        if (!$cardDetails) {
+            $response['errors']['general'] = 'No primary card found.';
+        } elseif (!password_verify($pin, $cardDetails['pin'])) {
+            $response['errors']['pin'] = 'Invalid PIN Code.';
+        }
     }
 }
 
-function getPrimaryCardDetails($connection, $userId) {
-    $stmt = $connection->prepare("SELECT pin, cardnumber, balance FROM card WHERE user_id = ? AND priority = 1 LIMIT 1");
+function getCardDetails($connection, $userId) {
+    $stmt = $connection->prepare("SELECT pin, cardnumber FROM card WHERE user_id = ? AND priority = 1 LIMIT 1");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
-    $stmt->bind_result($storedPin, $cardNumber, $balance);
+    $stmt->bind_result($storedPin, $cardNumber);
     $stmt->fetch();
     $stmt->close();
 
-    return $cardNumber ? [$storedPin, $cardNumber, $balance] : false;
+    return $cardNumber ? ['pin' => $storedPin, 'cardnumber' => $cardNumber] : false;
 }
 
-function updateBalanceAndRecordTransaction($connection, $userId, $amount, $cardNumber, &$response) {
+function processWithdrawal($connection, $userId, $amount, &$response) {
     $amount = -floatval($amount);
     $updateQuery = "UPDATE card SET balance = balance + ? WHERE user_id = ? AND priority = 1";
     $updateStmt = $connection->prepare($updateQuery);
     $updateStmt->bind_param("di", $amount, $userId);
 
     if ($updateStmt->execute()) {
-        recordTransaction($connection, $cardNumber, $amount, $response);
+        recordTransaction($connection, $userId, $amount, $response);
     } else {
-        $response['errors']['amount'] = 'An error occurred while processing the withdrawal. Please try again later.';
+        $response['errors']['general'] = 'An error occurred while processing the deposit. Please try again later.';
     }
 
     $updateStmt->close();
 }
 
-function recordTransaction($connection, $cardNumber, $amount, &$response) {
+function recordTransaction($connection, $userId, $amount, &$response) {
+    $cardDetails = getCardDetails($connection, $userId);
+    if (!$cardDetails) {
+        $response['errors']['general'] = 'No primary card found for transaction recording.';
+        return;
+    }
+
     $transactionQuery = "INSERT INTO transaction (cardnumber, amount, statement, date) VALUES (?, ?, 'Withdraw', NOW())";
     $transactionStmt = $connection->prepare($transactionQuery);
-    $transactionStmt->bind_param("sd", $cardNumber, $amount);
+    $transactionStmt->bind_param("sd", $cardDetails['cardnumber'], $amount);
 
     if ($transactionStmt->execute()) {
         $response['success'] = true;
         $response['redirect'] = 'randomQuote.php';
     } else {
-        $response['errors']['amount'] = 'An error occurred while recording the transaction. Please try again later.';
+        $response['errors']['general'] = 'An error occurred while recording the transaction. Please try again later.';
     }
 
     $transactionStmt->close();
 }
-?>

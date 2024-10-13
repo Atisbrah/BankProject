@@ -1,37 +1,37 @@
-export const setupDepositForm = () => {
-    const depositForm = document.getElementById('depositForm');
-    if (!depositForm) return;
+export const transactionFunction = (formId, apiEndpoint, successMessage) => {
+    const form = document.getElementById(formId);
+    if (!form) return;
 
-    depositForm.addEventListener('submit', e => {
+    form.addEventListener('submit', e => {
         e.preventDefault();
 
-        const amount = depositForm.querySelector('#amount');
-        const pin = depositForm.querySelector('#pin');
+        const amount = form.querySelector('#amount');
+        const pin = form.querySelector('#pin');
 
-        validateDepositInputs(amount, pin);
+        validateInputs(amount, pin);
 
-        if (depositForm.querySelectorAll('.error').length > 0) {
+        if (form.querySelectorAll('.error').length > 0) {
             return;
         }
 
-        const formData = new FormData(depositForm);
+        const formData = new FormData(form);
 
-        fetch('api/deposit.php', {
+        fetch(apiEndpoint, {
             method: 'POST',
             body: formData
         })
-        .then(response => response.text()) // Get the response as text first
+        .then(response => response.text())
         .then(text => {
             try {
-                const data = JSON.parse(text); // Parse the text as JSON
+                const data = JSON.parse(text);
                 if (data.success) {
-                    alert('Deposit successful.');
-                    loadContent(data.redirect); // Load the redirect page
-                    checkSessionAndLoadHeader(); // Update the header
+                    alert(successMessage);
+                    loadContent(data.redirect);
+                    checkSessionAndLoadHeader();
                 } else {
                     if (data.errors) {
                         for (const key in data.errors) {
-                            const errorElement = depositForm.querySelector(`#${key} ~ .errorMessage`);
+                            const errorElement = form.querySelector(`#${key} ~ .errorMessage`);
                             if (errorElement) {
                                 errorElement.innerText = data.errors[key];
                             }
@@ -40,7 +40,7 @@ export const setupDepositForm = () => {
                 }
             } catch (error) {
                 console.error('Failed to parse JSON:', error);
-                console.error('Response text:', text); // Log the raw response text for debugging
+                console.error('Response text:', text);
             }
         })
         .catch(error => {
@@ -49,11 +49,10 @@ export const setupDepositForm = () => {
     });
 };
 
-const validateDepositInputs = (amount, pin) => {
+const validateInputs = (amount, pin) => {
     const amountValue = amount.value.trim();
     const pinValue = pin.value.trim();
     
-    // Validate amount input
     if (amountValue === '') {
         setError(amount, 'Amount is required.');
     } else if (isNaN(amountValue) || parseFloat(amountValue) <= 0) {
@@ -64,7 +63,6 @@ const validateDepositInputs = (amount, pin) => {
         setSuccess(amount);
     }
 
-    // Validate PIN input
     if (pinValue === '') {
         setError(pin, 'PIN Code is required.');
     } else if (pinValue.length !== 4 || !/^\d{4}$/.test(pinValue)) {
@@ -73,7 +71,6 @@ const validateDepositInputs = (amount, pin) => {
         setSuccess(pin);
     }
 };
-
 
 import { setError, setSuccess } from "./formUtils.js";
 import { loadContent } from "./contentLoading.js";

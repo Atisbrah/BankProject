@@ -165,8 +165,8 @@ const createCardRow = (card) => {
         <td>${getPriorityLabel(card.priority)}</td>
         <td>
             <select onchange="updateCardPriority(${card.id}, this.value)">
-                <option value="0" ${card.priority == 0 ? 'selected' : ''}>Primary</option>
-                <option value="1" ${card.priority == 1 ? 'selected' : ''}>Secondary</option>
+                <option value="0" ${card.priority == 0 ? 'selected' : ''}>Secondary</option>
+                <option value="1" ${card.priority == 1 ? 'selected' : ''}>Primary</option>
             </select>
         </td>
         <td>
@@ -347,8 +347,8 @@ const getStatusLabel = (status) => {
 
 const getPriorityLabel = (priority) => {
     switch (priority) {
-        case 0: return 'Primary';
-        case 1: return 'Secondary';
+        case 0: return 'Secondary';
+        case 1: return 'Primary';
         default: return 'Unknown';
     }
 };

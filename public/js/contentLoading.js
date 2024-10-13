@@ -83,10 +83,10 @@
                         setupPersonalInfoButtons(); 
                         break;
                     case 'depositForm.php':
-                        setupDepositForm(); 
+                        transactionFunction('depositForm', 'api/deposit.php', 'Deposit successful.');
                         break;
                     case 'withdrawForm.php':
-                        setupWithdrawForm(); 
+                        transactionFunction('withdrawForm', 'api/withdraw.php', 'Withdraw successful.');
                         break; 
                     case 'transactionHistoryForm.php':
                         loadTransactionHistory();
@@ -173,14 +173,9 @@
     import { loadCreditCards } from './creditCards.js';
 
     /* **************************************************************************** */
-    // Deposit
+    // Deposit, Withdraw
 
-    import { setupDepositForm } from './depositFunction.js';
-
-    /* **************************************************************************** */
-    // Withdraw
-
-    import { setupWithdrawForm } from './withdrawFunction.js';
+    import { transactionFunction } from './transactionFunction.js';
 
     /* **************************************************************************** */
     // Transaction History

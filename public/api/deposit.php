@@ -104,4 +104,4 @@ function recordTransaction($connection, $userId, $amount, &$response) {
 
     $transactionStmt->close();
 }
-?>
+
