@@ -7,6 +7,10 @@ export const loadPersonalInfo = () => {
                 document.getElementById('user-name').innerText = data.user.name;
                 document.getElementById('user-email').innerText = data.user.email;
                 document.getElementById('user-authority').innerText = formatAuthorityLabel(data.user.authority);
+
+                if (data.user.authority === 2) {
+                    document.getElementById('delete-user-btn').style.display = 'none';
+                }
             } else {
                 showError(data.errors.join(', '));
             }
@@ -22,7 +26,7 @@ export const setupPersonalInfoButtons = () => {
         loadContent('changePasswordForm.php');
     })
     document.getElementById('delete-user-btn').addEventListener('click', () => {
-        loadContent('deleteUserForm.php');
+        loadContent('deleteAccountForm.php');
     });
 };
 

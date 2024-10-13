@@ -44,11 +44,10 @@
     };
 
     export const loadContent = (page, userId = null) => {
-        showLoadingMessage(); // Töltési üzenet megjelenítése
+        showLoadingMessage();
     
         let fetchUrl = `htmlTemplates/${page}`;
         
-        // Ha van userId, akkor azt hozzáadjuk az URL-hez
         if (userId) {
             fetchUrl += `?userId=${userId}`;
         }
@@ -57,14 +56,12 @@
             .then(handleFetchResponse)
             .then(data => {
                 if (typeof data === 'string') {
-                    updateContent(data); // Betöltött tartalom megjelenítése
+                    updateContent(data); 
                 } else {
                     showError('Error loading content');
                 }
     
-                setupContentLoadLinks(); // Linkek újra beállítása az új tartalomhoz
-    
-                // Oldal-specifikus logika kezelése
+                setupContentLoadLinks(); 
                 switch (page) {
                     case 'registerNewUser.php':
                         setupRegistrationValidation(); 
@@ -103,14 +100,14 @@
                     case 'changePasswordForm.php': 
                         changePassword();
                         break;
-                    case 'deleteUserForm.php': 
+                    case 'deleteAccountForm.php': 
                         deleteUser();
                         break;
                     default:
                         break;
                 }
     
-                checkSessionAndLoadHeader(); // Frissíti a fejlécet az új tartalom betöltése után
+                checkSessionAndLoadHeader();
             })
             .catch(error => {
                 console.error('Something went wrong:', error); 
@@ -122,18 +119,18 @@
     // Egyébként visszaadja a válasz szöveges tartalmát.
     const handleFetchResponse = async (response) => {
         if (!response.ok) {
-            const errorText = await response.text(); // Get the response text
-            console.error(`Error loading content: ${response.statusText}`, errorText); // Log the error
+            const errorText = await response.text(); 
+            console.error(`Error loading content: ${response.statusText}`, errorText);
             throw new Error(`Error loading content: ${response.statusText}`);
         }
     
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
-            return response.json(); // Return JSON if content type is JSON
+            return response.json(); 
         } else if (contentType && contentType.includes("text/html")) {
-            return response.text(); // Return HTML if content type is HTML
+            return response.text(); 
         } else {
-            const errorText = await response.text(); // Log the non-JSON response
+            const errorText = await response.text(); 
             console.error('Expected JSON or HTML but received:', errorText);
             throw new Error('Response is not JSON or HTML');
         }

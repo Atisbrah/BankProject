@@ -1,10 +1,10 @@
 export const checkSessionAndLoadHeader = () => {
-    fetch('api/getUserInfo.php') // Fetch user information
+    fetch('api/getUserInfo.php') 
         .then(response => response.json())
         .then(data => {
             if (data.user_name) {
                 loadHeader('headerLoggedIn.php', () => {
-                    updateHeaderWithUserInfo(data.user_name, data.priority_card, data.authority); // Átadtuk a authority-t is
+                    updateHeaderWithUserInfo(data.user_name, data.priority_card, data.authority); 
                 });
             } else {
                 loadHeader('headerLoggedOut.php');
@@ -20,9 +20,8 @@ export const loadHeader = (template, callback) => {
         .then(handleFetchResponse)
         .then(data => {
             document.getElementById('header').innerHTML = data;
-            setupContentLoadLinks(); // Setup links in new header
+            setupContentLoadLinks(); 
 
-            // Call the callback function if provided
             if (callback) {
                 callback();
             }
@@ -51,17 +50,17 @@ const updateHeaderWithUserInfo = (userName, priorityCard, authority) => {
         if (status === 1) {
             let hideTimeout;
 
-            transactionButton.onclick = null; // Enable dropdown
+            transactionButton.onclick = null;
             transactionButton.onmouseenter = () => {
                 clearTimeout(hideTimeout);
-                transactionDropdown.style.display = 'block'; // Show dropdown
+                transactionDropdown.style.display = 'block';
             };
             transactionButton.onmouseleave = () => {
                 hideTimeout = setTimeout(() => {
                     if (!transactionDropdown.matches(':hover')) {
                         transactionDropdown.style.display = 'none';
                     }
-                }, 500); // 0.5 second delay
+                }, 500);
             };
             transactionDropdown.onmouseenter = () => {
                 clearTimeout(hideTimeout);

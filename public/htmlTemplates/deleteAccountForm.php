@@ -13,6 +13,5 @@
             <div class="errorMessage"></div>
         </div>
         <button type="submit">Confirm</button>
-        <button id="cancelDelete">Cancel</button>
     </form>
 </div>

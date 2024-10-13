@@ -27,7 +27,7 @@ function handlePostRequest($connection, &$response) {
     $userId = $_SESSION['user_id']; 
 
     validateAmount($amount, $response);
-    validatePin($pin, $connection, $userId, $response); // Corrected the parameter order
+    validatePin($pin, $connection, $userId, $response);
 
     if (empty($response['errors'])) {
         processWithdrawal($connection, $userId, $amount, $response);

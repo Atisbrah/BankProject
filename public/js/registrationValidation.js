@@ -32,7 +32,7 @@ export const setupRegistrationValidation = () => {
             if (data.success) {
                 alert('Registration successful.');
                 loadContent(data.redirect);
-                checkSessionAndLoadHeader(); // Frissíti a header-t
+                checkSessionAndLoadHeader();
             } else {
                 if (data.errors) {
                     for (const key in data.errors) {
