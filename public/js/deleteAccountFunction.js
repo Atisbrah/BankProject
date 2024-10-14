@@ -16,7 +16,7 @@ export const deleteUser = () => {
 
         const formData = new FormData(deleteUserForm);
 
-        fetch('api/deleteUser.php', {
+        fetch('api/deleteAccount.php', {
             method: 'POST',
             body: formData
         })
@@ -24,6 +24,9 @@ export const deleteUser = () => {
         .then(data => {
             if (data.success) {
                 alert('User deleted successfully.');
+
+                handleLogout(); 
+
                 checkSessionAndLoadHeader();
                 loadContent(data.redirect);
             } else {
@@ -33,10 +36,11 @@ export const deleteUser = () => {
                     }
 
                     for (const key in data.errors) {
-                        const errorElement = document.getElementById(`${key} ~ .errorMessage`);
+                        const errorElement = document.querySelector(`#${key} ~ .errorMessage`);
 
                         if (errorElement) {
                             errorElement.innerText = data.errors[key];
+                            errorElement.classList.add('error');
                         }
                     }
                 }
@@ -67,3 +71,4 @@ const validatePasswordInputs = (password, passwordAgain) => {
 import { setError, setSuccess } from "./formUtils.js";
 import { loadContent } from "./contentLoading.js";
 import { checkSessionAndLoadHeader } from "./header.js";
+import { handleLogout } from "./logout.js";

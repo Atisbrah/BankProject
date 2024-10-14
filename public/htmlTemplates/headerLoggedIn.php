@@ -27,7 +27,7 @@
     </div>
 
     <div class="header-right" id="header-right">
-        <p><a href="api/logout.php">Log out</a></p>
+        <p><a href="#" data-load="logoutForm.php">Log out</a></p>
     </div>
 </div>
 

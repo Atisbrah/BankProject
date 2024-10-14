@@ -39,7 +39,6 @@ export function logoutOnReload() {
 
 // Kijelentkezés kezelése kattintásra
 export const handleLogout = (event) => {
-    event.preventDefault();
 
     fetch('api/logout.php')
         .then(response => response.json())
@@ -47,7 +46,7 @@ export const handleLogout = (event) => {
             if (data.success) {
                 checkSessionAndLoadHeader(); 
                 loadContent('randomQuote.php'); 
-                alert('Log out successful.');
+                alert('Logging out.');
             } else {
                 console.error('Kijelentkezés nem sikerült.');
             }

@@ -103,6 +103,9 @@
                     case 'deleteAccountForm.php': 
                         deleteUser();
                         break;
+                    case 'logoutForm.php':
+                        handleLogout();
+                        break;
                     default:
                         break;
                 }
@@ -203,4 +206,4 @@
     /* **************************************************************************** */
     // Delete user
 
-    import { deleteUser } from './deleteUserFunction.js';
+    import { deleteUser } from './deleteAccountFunction.js';

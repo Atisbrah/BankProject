@@ -71,6 +71,19 @@ function getCardDetails($connection, $userId) {
 }
 
 function processWithdrawal($connection, $userId, $amount, &$response) {
+    $balanceQuery = "SELECT balance FROM card WHERE user_id = ? AND priority = 1 LIMIT 1";
+    $balanceStmt = $connection->prepare($balanceQuery);
+    $balanceStmt->bind_param("i", $userId);
+    $balanceStmt->execute();
+    $balanceStmt->bind_result($balance);
+    $balanceStmt->fetch();
+    $balanceStmt->close();
+
+    if ($balance < $amount) {
+        $response['errors']['amount'] = 'Insufficient balance.';
+        return;
+    }
+
     $amount = -floatval($amount);
     $updateQuery = "UPDATE card SET balance = balance + ? WHERE user_id = ? AND priority = 1";
     $updateStmt = $connection->prepare($updateQuery);
@@ -79,11 +92,12 @@ function processWithdrawal($connection, $userId, $amount, &$response) {
     if ($updateStmt->execute()) {
         recordTransaction($connection, $userId, $amount, $response);
     } else {
-        $response['errors']['general'] = 'An error occurred while processing the deposit. Please try again later.';
+        $response['errors']['general'] = 'An error occurred while processing the withdrawal. Please try again later.';
     }
 
     $updateStmt->close();
 }
+
 
 function recordTransaction($connection, $userId, $amount, &$response) {
     $cardDetails = getCardDetails($connection, $userId);
