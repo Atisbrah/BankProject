@@ -1,5 +1,8 @@
 <div class="creditCardList">
     <h2>Your Registered Credit Cards</h2>
+
+    <p id="noCardsMessage" style="display: none;">You have no registered credit cards.</p>
+
     <table id="creditCardTable" class="table">
         <thead>
             <tr>
@@ -14,13 +17,4 @@
         <tbody>
         </tbody>
     </table>
-</div>
-
-<div class="modal-overlay"></div>
-
-<div id="pinModal" class="modal">
-    <h2>Enter PIN</h2>
-    <input type="password" id="pinInput" maxlength="4" inputmode="numeric" pattern="\d*">
-    <button id="confirmPin">Confirm</button>
-    <button id="cancelPin">Cancel</button>
 </div>

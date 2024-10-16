@@ -3,7 +3,10 @@ export const loadCreditCards = async () => {
         const response = await fetch('api/listCreditCards.php');
         const data = await response.json();
 
-        if (data.success) {
+        const table = document.querySelector('.creditCardList table');
+        const noCardsMessage = document.querySelector('#noCardsMessage');
+        
+        if (data.success && data.cards.length > 0) {
             const tableBody = document.querySelector('#creditCardTable tbody');
             tableBody.innerHTML = ''; // Clear previous content
 
@@ -26,8 +29,14 @@ export const loadCreditCards = async () => {
                 `;
                 tableBody.appendChild(row);
             });
+
+            // Display table and hide the no-cards message
+            table.style.display = 'table';
+            noCardsMessage.style.display = 'none';
         } else {
-            console.error('Error loading credit cards:', data.errors.join(', '));
+            // If no cards found, hide the table and show the no-cards message
+            table.style.display = 'none';
+            noCardsMessage.style.display = 'block';
         }
     } catch (error) {
         console.error('Error fetching credit cards:', error);

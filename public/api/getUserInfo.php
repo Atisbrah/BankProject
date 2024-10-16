@@ -34,6 +34,15 @@ if (isset($_SESSION['user_name']) && isset($_SESSION['user_id'])) {
         $response['authority'] = $result->fetch_assoc()['authority'];
     }
 
+    $query = "SELECT COUNT(*) as card_count FROM card WHERE user_id = ? AND priority = 1";  
+    $stmt = $connection->prepare($query);
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $response['priority_card_count'] = $result->fetch_assoc()['card_count'];
+    }
+
     $stmt->close();
 }
 

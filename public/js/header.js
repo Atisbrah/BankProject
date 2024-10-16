@@ -4,7 +4,7 @@ export const checkSessionAndLoadHeader = () => {
         .then(data => {
             if (data.user_name) {
                 loadHeader('headerLoggedIn.php', () => {
-                    updateHeaderWithUserInfo(data.user_name, data.priority_card, data.authority); 
+                    updateHeaderWithUserInfo(data.user_name, data.priority_card, data.authority, data.priority_card_count); 
                 });
             } else {
                 loadHeader('headerLoggedOut.php');
@@ -31,7 +31,7 @@ export const loadHeader = (template, callback) => {
         });
 };
 
-const updateHeaderWithUserInfo = (userName, priorityCard, authority) => {
+const updateHeaderWithUserInfo = (userName, priorityCard, authority, priorityCardCount) => {
     const headerLeft = document.getElementById('header-left');
     const transactionButton = document.getElementById('transaction-button');
     const transactionDropdown = document.getElementById('transaction-dropdown');
@@ -46,8 +46,7 @@ const updateHeaderWithUserInfo = (userName, priorityCard, authority) => {
         const formattedStatus = formatCardStatus(status);
         headerContent += `<p>${formattedCardNumber} | Balance: ${balance} Ft | Status: ${formattedStatus}</p>`;
 
-        // Only enable the transaction dropdown if the card status is active (1)
-        if (status === 1) {
+        if (status === 1 && priorityCardCount > 0) {
             let hideTimeout;
 
             transactionButton.onclick = null;
@@ -73,6 +72,8 @@ const updateHeaderWithUserInfo = (userName, priorityCard, authority) => {
             };
         } else {
             transactionDropdown.style.display = 'none'; 
+            transactionButton.style.pointerEvents = 'none';  
+            transactionButton.style.opacity = '0.5';         
         }
 
         const closeModal = () => {
@@ -85,6 +86,9 @@ const updateHeaderWithUserInfo = (userName, priorityCard, authority) => {
 
     } else {
         headerContent += `<p>N/A | Balance: N/A Ft | Status: N/A</p>`;
+        transactionDropdown.style.display = 'none'; 
+        transactionButton.style.pointerEvents = 'none'; 
+        transactionButton.style.opacity = '0.5';        
     }
 
     headerLeft.innerHTML = headerContent;
