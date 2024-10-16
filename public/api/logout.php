@@ -1,7 +1,7 @@
 <?php
 session_start();
-session_unset(); // Minden session változó törlése
-session_destroy(); // Session bezárása
+session_unset();
+session_destroy();
 
 header('Content-Type: application/json');
 

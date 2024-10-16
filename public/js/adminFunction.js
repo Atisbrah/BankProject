@@ -1,6 +1,32 @@
 let InspectId = null;
 let InspectCardId = null;
+let userId = null;
 
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch('api/loginUser.php');
+        const data = await response.json();
+        userId = data.userId;
+    } catch (error) {
+        console.error('Error fetching user ID:', error);
+    }
+
+    const backToUserListLink = document.querySelector('[data-load="adminPageUsersForm.php"]');
+    if (backToUserListLink) {
+        backToUserListLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            loadAdminPageUsersForm();
+        });
+    }
+
+    const backToCardListLink = document.querySelector('[data-load="adminPageCardsForm.php"]');
+    if (backToCardListLink) {
+        backToCardListLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            loadAdminPageCardsForm();
+        });
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     const backToUserListLink = document.querySelector('[data-load="adminPageUsersForm.php"]');
@@ -45,7 +71,7 @@ export const loadAdminPageUsers = async () => {
         const tbody = document.querySelector('#userTable tbody');
         if (!tbody) throw new Error('User table body not found.');
 
-        tbody.innerHTML = ''; // Clear existing rows
+        tbody.innerHTML = '';
         if (jsonData.success) {
             jsonData.users.forEach(user => {
                 tbody.appendChild(createUserRow(user));
@@ -59,17 +85,22 @@ export const loadAdminPageUsers = async () => {
 // Helper function to create user table row
 const createUserRow = (user) => {
     const row = document.createElement('tr');
+    const isCurrentAdmin = user.id === userId;
+
     row.innerHTML = `
         <td>${user.id}</td>
         <td>${user.name}</td>
         <td>${user.email}</td>
         <td>${getAuthorityLabel(user.authority)}</td>
         <td>
-            <select onchange="updateUserAuthority(${user.id}, this.value)">
-                <option value="0" ${user.authority == 0 ? 'selected' : ''}>Blocked/Deleted</option>
-                <option value="1" ${user.authority == 1 ? 'selected' : ''}>User</option>
-                <option value="2" ${user.authority == 2 ? 'selected' : ''}>Admin</option>
-            </select>
+            ${isCurrentAdmin ? 
+                '<span>Your Account</span>' :
+                `<select onchange="updateUserAuthority(${user.id}, this.value)">
+                    <option value="0" ${user.authority == 0 ? 'selected' : ''}>Blocked/Deleted</option>
+                    <option value="1" ${user.authority == 1 ? 'selected' : ''}>User</option>
+                    <option value="2" ${user.authority == 2 ? 'selected' : ''}>Admin</option>
+                </select>`
+            }
         </td>
         <td>
             <a href="#" onclick="handleShowCards(${user.id})">Show Cards</a>
@@ -79,7 +110,11 @@ const createUserRow = (user) => {
 };
 
 // Update user authority
-window.updateUserAuthority = async (userId, newAuthority) => {
+window.updateUserAuthority = async (userId, newAuthority, currentAdminId) => {
+    if (userId === currentAdminId && newAuthority !== 2) {
+        alert('You cannot change your own authority level!');
+        return;
+    }
     try {
         const data = await postJson('api/updateUserAuthority.php', { userId, authority: newAuthority });
         if (data.success) {

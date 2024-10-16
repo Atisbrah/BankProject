@@ -62,6 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$response['userId'] = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+
 echo json_encode($response);
 $connection->close();
 ?>

@@ -30,7 +30,3 @@ Extra ellenőrzés a transfer-re:
 - A bankkártya számnak léteznie kell az adatbázisban.
 - A bankkártya statusa = 1 kell, hogy legyen (Active). Ha status = 0, status = 2 (Inactive/Blocked), akkor ne lehessen rá pénzt utalni.
 - Ha a Statement üresen marad, akkor az üzenet: "Transfer from: " és a felhasználó neve.
-
-/* ************************************************************* */
-
-2024.10.13: Delete account létrehozása.
