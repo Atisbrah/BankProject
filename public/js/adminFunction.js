@@ -3,6 +3,25 @@ let InspectCardId = null;
 let userId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
+    
+})
+
+window.loadAdminPageUsersForm = async () => {
+    try {
+        const html = await fetchHtml('htmlTemplates/adminPageUsersForm.php');
+        const contentArea = document.querySelector('#content');
+        if (contentArea) {
+            contentArea.innerHTML = html;
+            await loadAdminPageUsers();
+        } else {
+            throw new Error('Content area not found');
+        }
+    } catch (error) {
+        console.error('Error loading admin page users form:', error);
+    }
+};
+
+const runListeners = async () => {
     try {
         const response = await fetch('api/loginUser.php');
         const data = await response.json();
@@ -26,44 +45,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             loadAdminPageCardsForm();
         });
     }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const backToUserListLink = document.querySelector('[data-load="adminPageUsersForm.php"]');
-    if (backToUserListLink) {
-        backToUserListLink.addEventListener('click', (event) => {
-            event.preventDefault();
-            loadAdminPageUsersForm();
-        });
-    }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const backToCardListLink = document.querySelector('[data-load="adminPageCardsForm.php"]');
-    if (backToCardListLink) {
-        backToCardListLink.addEventListener('click', (event) => {
-            event.preventDefault();
-            loadAdminPageCardsForm();
-        });
-    }
-})
-
-window.loadAdminPageUsersForm = async () => {
-    try {
-        const html = await fetchHtml('htmlTemplates/adminPageUsersForm.php');
-        const contentArea = document.querySelector('#content');
-        if (contentArea) {
-            contentArea.innerHTML = html;
-            await loadAdminPageUsers();
-        } else {
-            throw new Error('Content area not found');
-        }
-    } catch (error) {
-        console.error('Error loading admin page users form:', error);
-    }
 };
 
 export const loadAdminPageUsers = async () => {
+    runListeners();
     try {
         const jsonData = await fetchJson('api/adminPageUsers.php');
         const tbody = document.querySelector('#userTable tbody');
