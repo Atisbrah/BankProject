@@ -25,8 +25,8 @@ export const setupNewCardValidation = () => {
         .then(data => {
             if (data.success) {
                 alert('Card registration successful.');
-                loadContent(data.redirect); // Load the redirect page
-                checkSessionAndLoadHeader(); // Update the header
+                loadContent(data.redirect);
+                checkSessionAndLoadHeader();
             } else {
                 if (data.errors) {
                     for (const key in data.errors) {

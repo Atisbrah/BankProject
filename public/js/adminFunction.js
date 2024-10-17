@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 })
 
-// Function to load the user list form
 window.loadAdminPageUsersForm = async () => {
     try {
         const html = await fetchHtml('htmlTemplates/adminPageUsersForm.php');
@@ -64,7 +63,6 @@ window.loadAdminPageUsersForm = async () => {
     }
 };
 
-// Function to fetch and load users
 export const loadAdminPageUsers = async () => {
     try {
         const jsonData = await fetchJson('api/adminPageUsers.php');
@@ -82,7 +80,6 @@ export const loadAdminPageUsers = async () => {
     }
 };
 
-// Helper function to create user table row
 const createUserRow = (user) => {
     const row = document.createElement('tr');
     const isCurrentAdmin = user.id === userId;
@@ -109,7 +106,6 @@ const createUserRow = (user) => {
     return row;
 };
 
-// Update user authority
 window.updateUserAuthority = async (userId, newAuthority, currentAdminId) => {
     if (userId === currentAdminId && newAuthority !== 2) {
         alert('You cannot change your own authority level!');
@@ -127,7 +123,6 @@ window.updateUserAuthority = async (userId, newAuthority, currentAdminId) => {
     }
 };
 
-// Load admin page cards form
 window.loadAdminPageCardsForm = async () => {
     try {
         const html = await fetchHtml('htmlTemplates/adminPageCardsForm.php');
@@ -143,7 +138,6 @@ window.loadAdminPageCardsForm = async () => {
     }
 };
 
-// Load admin page transactions form
 window.loadAdminPageTransactionsForm = async () => {
     try {
         const html = await fetchHtml('htmlTemplates/adminPageTransactionsForm.php');
@@ -159,14 +153,13 @@ window.loadAdminPageTransactionsForm = async () => {
     }
 };
 
-// Load admin page cards
 window.loadAdminPageCards = async (userId) => {
     try {
         const jsonData = await fetchJson(`api/adminPageCards.php?userId=${userId}`);
         const tbody = document.querySelector('#cardTable tbody');
         if (!tbody) throw new Error('Card table body not found.');
 
-        tbody.innerHTML = ''; // Clear existing rows
+        tbody.innerHTML = '';
         if (jsonData.success && jsonData.cards.length > 0) {
             jsonData.cards.forEach(card => {
                 tbody.appendChild(createCardRow(card));
@@ -181,7 +174,6 @@ window.loadAdminPageCards = async (userId) => {
     }
 };
 
-// Helper function to create card table row
 const createCardRow = (card) => {
     const row = document.createElement('tr');
     row.innerHTML = `
@@ -211,7 +203,6 @@ const createCardRow = (card) => {
     return row;
 };
 
-// Show cards for a user
 window.handleShowCards = (userId) => {
     InspectId = userId;
     loadAdminPageCardsForm().then(() => {
@@ -226,7 +217,6 @@ window.handleShowTransactions = (cardnumber) => {
     });
 }
 
-// Update card status
 window.updateCardStatus = async (cardId, newStatus) => {
     try {
         const data = await postJson('api/updateCardStatus.php', { cardId, status: newStatus });
@@ -240,7 +230,6 @@ window.updateCardStatus = async (cardId, newStatus) => {
     }
 };
 
-// Update card priority
 window.updateCardPriority = async (cardId, newPriority) => {
     try {
         const data = await postJson('api/updateCardPriority.php', { cardId, priority: newPriority });
@@ -254,7 +243,6 @@ window.updateCardPriority = async (cardId, newPriority) => {
     }
 };
 
-// Load transactions for a card
 window.loadPageAndShowTransactions = async (cardnumber) => {
     InspectCardId = cardnumber;
     loadBackToCreditCardListButton();
@@ -280,7 +268,6 @@ window.loadPageAndShowTransactions = async (cardnumber) => {
     }
 };
 
-// Helper function to create transaction row
 const createTransactionRow = (transaction) => {
     const row = document.createElement('tr');
     row.innerHTML = `
@@ -293,7 +280,6 @@ const createTransactionRow = (transaction) => {
     return row;
 };
 
-// Load the back button for user list
 function loadBackToUserListButton() {
     const miniHeaderRight = document.querySelector('#miniHeaderRight');
     if (miniHeaderRight) {
@@ -307,10 +293,8 @@ function loadBackToUserListButton() {
 function loadBackToCreditCardListButton() {
     const miniHeaderRight = document.querySelector('#miniHeaderRight');
     if (miniHeaderRight) {
-        // Clear previous content
         miniHeaderRight.innerHTML = '';
 
-        // Create and append the back to user list link
         const backLink = document.createElement('a');
         backLink.href = '#';
         backLink.textContent = 'Back to User List';
@@ -321,13 +305,12 @@ function loadBackToCreditCardListButton() {
         };
         miniHeaderRight.appendChild(backLink);
         
-        // Create and append the show cards link
         const showCardsLink = document.createElement('a');
         showCardsLink.href = '#';
         showCardsLink.textContent = 'Show Cards';
         showCardsLink.onclick = (event) => {
             event.preventDefault();
-            handleShowCards(InspectId); // Use InspectId directly
+            handleShowCards(InspectId);
         };
         miniHeaderRight.appendChild(showCardsLink);
     } else {
@@ -336,7 +319,6 @@ function loadBackToCreditCardListButton() {
 }
 
 
-// Utility functions for fetching HTML and JSON
 const fetchHtml = async (url) => {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Failed to load HTML from ${url}`);
@@ -361,7 +343,6 @@ const postJson = async (url, data) => {
     return response.json();
 };
 
-// Utility functions for labels
 const getAuthorityLabel = (authority) => {
     switch (authority) {
         case 0: return 'Blocked/Deleted';
@@ -388,12 +369,10 @@ const getPriorityLabel = (priority) => {
     }
 };
 
-// Reset inspect ID
 function resetInspectId() {
     InspectId = null;
 }
 
-// Reset inspect card ID
 function resetInspectCardId() {
     InspectCardId = null;
 }

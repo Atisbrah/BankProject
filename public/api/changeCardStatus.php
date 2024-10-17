@@ -17,7 +17,6 @@ try {
         $data = json_decode(file_get_contents('php://input'), true);
         $cardNumber = trim($data['cardNumber']);
 
-        // Validate inputs
         if (empty($cardNumber) || !preg_match('/^\d{4}-\d{4}-\d{4}-\d{4}$/', $cardNumber)) {
             throw new Exception('Invalid card number format.');
         }

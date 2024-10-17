@@ -1,4 +1,5 @@
 export const checkSessionAndLoadHeader = () => {
+    loadFooter();
     fetch('api/getUserInfo.php') 
         .then(response => response.json())
         .then(data => {
@@ -28,6 +29,17 @@ export const loadHeader = (template, callback) => {
         })
         .catch(error => {
             console.error('Error loading header:', error);
+        });
+};
+
+export const loadFooter = () => {
+    return fetch('htmlTemplates/footer.php')
+        .then(handleFetchResponse)
+        .then(data => {
+            document.getElementById('footer').innerHTML = data;
+        })
+        .catch(error => {
+            console.error('Error loading footer:', error);
         });
 };
 
@@ -101,24 +113,12 @@ const updateHeaderWithUserInfo = (userName, priorityCard, authority, priorityCar
     }
 };
 
+const handleFetchResponse = (response) => {
+    if (!response.ok) {
+        throw new Error(`Error loading content: ${response.statusText}`);
+    }
+    return response.text();
+};
 
-/* **************************************************************************** */
-    /* Bankkártya számának és státuszának formázása */
-
-    import { formatCardNumber, formatCardStatus } from './formatting.js';
-
-    /* **************************************************************************** */
-    /* Eseménykezelők */
-
-    import { setupContentLoadLinks } from './contentLoading.js';
-
-    /* **************************************************************************** */
-    // Ellenőrzi a fetch válasz státuszát. Ha a válasz nem sikeres (nem 2xx státusz), hibát dob.
-    // Egyébként visszaadja a válasz szöveges tartalmát.
-
-    const handleFetchResponse = (response) => {
-        if (!response.ok) {
-            throw new Error(`Error loading content: ${response.statusText}`);
-        }
-        return response.text();
-    };
+import { formatCardNumber, formatCardStatus } from './formatting.js';
+import { setupContentLoadLinks } from './contentLoading.js';

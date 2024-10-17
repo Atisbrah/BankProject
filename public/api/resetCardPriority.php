@@ -18,11 +18,9 @@ $cardId = $data['cardId'];
 
 if (isset($_SESSION['user_id']) && $_SESSION['user_authority'] == 2) { 
     try {
-        // Az összes többi kártya prioritását 0-ra állítjuk
         $stmt = $pdo->prepare("UPDATE card SET priority = 0 WHERE priority = 1 AND id != :cardId");
         $stmt->execute(['cardId' => $cardId]);
     
-        // Most frissítjük a kiválasztott kártyát prioritásra 1
         $stmt = $pdo->prepare("UPDATE card SET priority = 1 WHERE id = :cardId");
         $stmt->execute(['cardId' => $cardId]);
     

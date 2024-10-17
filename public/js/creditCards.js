@@ -8,7 +8,7 @@ export const loadCreditCards = async () => {
         
         if (data.success && data.cards.length > 0) {
             const tableBody = document.querySelector('#creditCardTable tbody');
-            tableBody.innerHTML = ''; // Clear previous content
+            tableBody.innerHTML = '';
 
             data.cards.forEach(card => {
                 const { statusText, buttonText, buttonColor, isDisabled } = getStatusProperties(card.status);
@@ -30,11 +30,9 @@ export const loadCreditCards = async () => {
                 tableBody.appendChild(row);
             });
 
-            // Display table and hide the no-cards message
             table.style.display = 'table';
             noCardsMessage.style.display = 'none';
         } else {
-            // If no cards found, hide the table and show the no-cards message
             table.style.display = 'none';
             noCardsMessage.style.display = 'block';
         }

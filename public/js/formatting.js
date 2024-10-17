@@ -2,7 +2,6 @@ export const formatCardNumber = (cardNumber) => {
     return cardNumber.replace(/(\d{4})(?=\d)/g, "$1-");
 };
 
-// Bankkártya státuszának formázása
 export const formatCardStatus = (status) => {
     switch (status) {
         case 0:

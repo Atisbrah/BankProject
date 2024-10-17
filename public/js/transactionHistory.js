@@ -4,21 +4,20 @@ export const loadTransactionHistory = () => {
             if (!response.ok) {
                 throw new Error('Network response was not ok.');
             }
-            return response.text();  // Válasz szöveges tartalmának lekérése
+            return response.text();
         })
         .then(text => {
-            return JSON.parse(text); // Próbáld meg JSON-ként értelmezni
+            return JSON.parse(text);
         })
         .then(data => {
             const tableBody = document.querySelector('#transactionTable tbody');
-            tableBody.innerHTML = ''; // Clear previous content
+            tableBody.innerHTML = '';
 
             if (data.success) {
                 if (data.transaction && data.transaction.length > 0) {
-                    // Iteráljunk minden tranzakción és hozzuk létre a táblázat sorait
                     data.transaction.forEach(transaction => {
                         const row = document.createElement('tr');
-                        const date = new Date(transaction.date).toLocaleString(); // Teljes dátum és idő formátum
+                        const date = new Date(transaction.date).toLocaleString();
                         row.innerHTML = `
                             <td>${transaction.id}</td>
                             <td>${transaction.amount} Ft</td>
@@ -28,11 +27,9 @@ export const loadTransactionHistory = () => {
                         tableBody.appendChild(row);
                     });
                 } else {
-                    // Ha nincsenek tranzakciók
                     tableBody.innerHTML = '<tr><td colspan="4">No Transaction found.</td></tr>';
                 }
             } else {
-                // Ha a szerver visszatér a hibával
                 tableBody.innerHTML = `<tr><td colspan="4">${data.errors.join(', ')}</td></tr>`;
                 console.error('Error loading transactions:', data.errors.join(', '));
             }

@@ -1,6 +1,13 @@
+Adatbázis neve: bank
+Táblák:
+
+- user (id PK, name, email, password, authority)
+- card (cardnumber PK, balance, user_id FK, pin, status, priority)
+- transaction (id PK, cardnumber FK, amount, statement, date)
+
 user authority: 0 blocked/deleted
-            1 logged in
-            2 admin
+                1 logged in
+                2 admin
 
 card status: 0 inactive
 	 		 1 active
@@ -9,24 +16,84 @@ card status: 0 inactive
 primary Card: 0 Secondary
 			  1 Primary
 
+/* ****************************************************************** */
 
-- user (id PK, name, email, password, authority)
-- card (cardnumber PK, balance, user_id FK, pin, status, priority)
-- transaction (id PK, cardnumber FK, amount, statement, date)
+SQL a táblák létrehozásához:
 
-Ami hiányzik:
-- Tranzakciónál a Transfer javítása, Delete account létrehozása
+user:
 
-Amit tervezek:
-- Üzenőfal / Fórum
-- Admin jóváhagyás
+CREATE TABLE `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` char(40) NOT NULL,
+  `email` char(40) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `authority` tinyint(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
+card:
 
-/* ************************************************************* */
+CREATE TABLE `card` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cardnumber` char(19) NOT NULL,
+  `user_id` char(40) NOT NULL,
+  `balance` int(11) NOT NULL DEFAULT 0,
+  `pin` char(61) NOT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT 0,
+  `priority` tinyint(2) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `cardnumber` (`cardnumber`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
 
-2024.09.26: Transfer már majdnem kész, hibakezelés kell amount input-ra.
+transaction:
 
-Extra ellenőrzés a transfer-re:
-- A bankkártya számnak léteznie kell az adatbázisban.
-- A bankkártya statusa = 1 kell, hogy legyen (Active). Ha status = 0, status = 2 (Inactive/Blocked), akkor ne lehessen rá pénzt utalni.
-- Ha a Statement üresen marad, akkor az üzenet: "Transfer from: " és a felhasználó neve.
+CREATE TABLE `transaction` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cardnumber` char(19) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `statement` char(40) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `cardnumber` (`cardnumber`)
+) ENGINE=InnoDB AUTO_INCREMENT=126 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+
+/* ****************************************************************** */
+
+Véletlenszerű adatok a táblákhoz:
+
+user:
+
+INSERT INTO `user` (`name`, `email`, `password`, `authority`) VALUES
+('John Doe', 'john.doe1@example.com', '$2y$10$abcdfg1234567890', 1),
+('Jane Smith', 'jane.smith2@example.com', '$2y$10$hijklmnop1234567', 1),
+('Peter Parker', 'peter.parker3@example.com', '$2y$10$qwertyuiop123456', 0),
+('Bruce Wayne', 'bruce.wayne4@example.com', '$2y$10$asdfghjkl123456', 1),
+('Clark Kent', 'clark.kent5@example.com', '$2y$10$zxcvbnmasdf123456', 1),
+('Tony Stark', 'tony.stark6@example.com', '$2y$10$poiuytrewq123456', 0),
+('Natasha Romanoff', 'natasha.romanoff7@example.com', '$2y$10$lkjhgfdsazxcvbnm', 1),
+('Steve Rogers', 'steve.rogers8@example.com', '$2y$10$plmoknijbhuvgycfx', 1),
+('Diana Prince', 'diana.prince9@example.com', '$2y$10$nqwertyuiomnbvcxz', 0),
+('Barry Allen', 'barry.allen10@example.com', '$2y$10$mnbvcxzlkjhgfdsaq', 1),
+('Wanda Maximoff', 'wanda.maximoff11@example.com', '$2y$10$aqswdefrgthyjukil', 1),
+('Scott Lang', 'scott.lang12@example.com', '$2y$10$lkjhgfdsaqwertyui', 0),
+('Bruce Banner', 'bruce.banner13@example.com', '$2y$10$oiuytrewqlkjhgfds', 1),
+('Stephen Strange', 'stephen.strange14@example.com', '$2y$10$qazwsxedcrfvtgby', 1);
+
+card:
+
+INSERT INTO `card` (`cardnumber`, `user_id`, `balance`, `pin`, `status`, `priority`) VALUES
+('1111-2222-3333-4444', '1', 5000, '$2y$10$abcdfg1234567890', 0, 1),
+('2222-3333-4444-5555', '2', 10000, '$2y$10$hijklmnop1234567', 1, 2),
+('3333-4444-5555-6666', '3', 7500, '$2y$10$qwertyuiop123456', 1, 1),
+('4444-5555-6666-7777', '4', 15000, '$2y$10$asdfghjkl123456', 2, 2),
+('5555-6666-7777-8888', '5', 6000, '$2y$10$zxcvbnmasdf123456', 0, 1),
+('6666-7777-8888-9999', '6', 12000, '$2y$10$poiuytrewq123456', 1, 2),
+('7777-8888-9999-0000', '7', 4500, '$2y$10$lkjhgfdsazxcvbnm', 0, 1),
+('8888-9999-0000-1111', '8', 3000, '$2y$10$plmoknijbhuvgycfx', 2, 2),
+('9999-0000-1111-2222', '9', 9000, '$2y$10$nqwertyuiomnbvcxz', 1, 1),
+('0000-1111-2222-3333', '10', 4000, '$2y$10$mnbvcxzlkjhgfdsaq', 0, 1),
+('1111-3333-5555-7777', '11', 20000, '$2y$10$aqswdefrgthyjukil', 1, 2),
+('2222-4444-6666-8888', '12', 16000, '$2y$10$lkjhgfdsaqwertyui', 0, 1),
+('3333-5555-7777-9999', '13', 8000, '$2y$10$oiuytrewqlkjhgfds', 2, 2),
+('4444-6666-8888-0000', '14', 18000, '$2y$10$qazwsxedcrfvtgby', 1, 1);

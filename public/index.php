@@ -1,8 +1,3 @@
-<?php 
-require_once "../config/db.php"; 
-require_once "../config/session.php";
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,14 +9,20 @@ require_once "../config/session.php";
 
 </head>
 <body>
+    
     <header id="header">
+
     </header>
+
     <main id="content">
 
     </main>
+
     <footer id="footer">
-        <?php include 'htmlTemplates/footer.php'; ?>
+
     </footer>
+
     <script type="module" src="./js/main.js"></script>
+
 </body>
 </html>

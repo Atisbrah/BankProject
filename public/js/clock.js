@@ -17,8 +17,6 @@ export function updateClock() {
 }
 
 export function startClock() {
-    // Frissíti az órát másodpercenként
     setInterval(updateClock, 1000);
-    // Az óra inicializálása az oldal betöltésekor
     updateClock();
 }
