@@ -22,6 +22,9 @@ export const loadPersonalInfo = () => {
 };
 
 export const setupPersonalInfoButtons = () => {
+    document.getElementById('edit-btn').addEventListener('click', () => {
+        loadContent('editPersonalInfoForm.php');
+    })
     document.getElementById('change-password-btn').addEventListener('click', () => {
         loadContent('changePasswordForm.php');
     })

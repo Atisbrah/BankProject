@@ -100,6 +100,9 @@ export const loadContent = (page, userId = null) => {
                 case 'logoutForm.php':
                     handleLogout();
                     break;
+                case 'editPersonalInfoForm.php':
+                    editPersonalInfo();
+                    break;
                 default:
                     break;
             }
@@ -144,3 +147,4 @@ import { setupTransferForm } from './transferFunction.js';
 import { loadAdminPageUsers } from './adminFunction.js';
 import { changePassword } from './changePasswordFunction.js';
 import { deleteUser } from './deleteAccountFunction.js';
+import { editPersonalInfo } from './editPersonalInfoFunction.js';
