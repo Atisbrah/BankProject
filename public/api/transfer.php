@@ -41,18 +41,22 @@ function validateCardNumber($targetCardNumber, $connection, &$response) {
     if (empty($targetCardNumber)) {
         $response['errors']['cardNumber'] = 'Card number is required.';
     } else {
-        $stmt = $connection->prepare("SELECT cardnumber, user_id FROM card WHERE cardnumber = ?");
+        $stmt = $connection->prepare("SELECT status FROM card WHERE cardnumber = ?");
         $stmt->bind_param("s", $targetCardNumber);
         $stmt->execute();
-        $stmt->store_result();
+        $stmt->bind_result($status);
+        $stmt->fetch();
 
-        if ($stmt->num_rows === 0) {
+        if ($status === null) {
             $response['errors']['cardNumber'] = 'Card number does not exist.';
+        } elseif ($status != 1) {
+            $response['errors']['cardNumber'] = 'Transfer not allowed. The card is either inactive or blocked.';
         }
 
         $stmt->close();
     }
 }
+
 
 function validateAmount($amount, &$response) {
     if (empty($amount)) {
@@ -87,13 +91,10 @@ function processTransfer($connection, $userId, $targetCardNumber, $amount, $pin,
     } elseif ($balance < $amount) {
         $response['errors']['amount'] = 'Insufficient funds on the primary card.';
     } else {
-        // Get the user name of the target card holder
         $targetUserName = getCardHolderName($connection, $targetCardNumber);
 
-        // Get the current logged-in user's name
         $currentUserName = $_SESSION['user_name'];
 
-        // Set the statement for both transactions if not provided
         $sourceStatement = empty($statement) ? "Transfer to: " . $targetUserName : $statement;
         $targetStatement = "Transfer from: " . $currentUserName;
 
@@ -124,7 +125,6 @@ function getCardHolderName($connection, $cardNumber) {
 }
 
 function transferAmount($connection, $sourceCardNumber, $targetCardNumber, $amount, $sourceStatement, $targetStatement, &$response) {
-    // Make sure to cast the amount to a float
     $amount = floatval($amount); 
 
     $connection->begin_transaction();
@@ -165,7 +165,7 @@ function transferAmount($connection, $sourceCardNumber, $targetCardNumber, $amou
         $response['redirect'] = 'randomQuote.php';
 
     } catch (Exception $e) {
-        $connection->rollback(); // rollback transaction on error
+        $connection->rollback();
         $response['success'] = false;
         $response['errors']['general'] = 'A server error occurred. Please try again later.';
         error_log("Transfer error: " . $e->getMessage());

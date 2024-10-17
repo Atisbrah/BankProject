@@ -12,7 +12,7 @@ export const setupTransferForm = () => {
         const amount = transferForm.querySelector('#amount');
         const pin = transferForm.querySelector('#pin');
 
-        validateTransferInputs(cardNumber, statement, amount, pin);
+        validateTransferInputs(cardNumber, amount, pin);
 
         if (transferForm.querySelectorAll('.error').length > 0) {
             return;
@@ -25,24 +25,20 @@ export const setupTransferForm = () => {
             method: 'POST',
             body: formData
         })
-        .then(response => response.text()) // Get the response as text first
+        .then(response => response.text()) 
         .then(text => {
             try {
-                const data = JSON.parse(text); // Parse the text as JSON
+                const data = JSON.parse(text);
                 if (data.success) {
                     alert('Transfer successful.');
-                    loadContent(data.redirect); // Load the redirect page
-                    checkSessionAndLoadHeader(); // Update the header
+                    loadContent(data.redirect);
+                    checkSessionAndLoadHeader();
                 } else {
                     if (data.errors) {
                         for (const key in data.errors) {
                             const errorElement = transferForm.querySelector(`#${key} ~ .errorMessage`);
                             if (errorElement) {
-                                errorElement.textContent = data.errors[key];
-                                // Reset the amount input if the error is specific to it
-                                if (key === 'amount') {
-                                    amount.value = ''; // Clear the amount field
-                                }
+                                errorElement.innerText = data.errors[key];
                             }
                         }
                     }
@@ -58,21 +54,19 @@ export const setupTransferForm = () => {
     });
 };
 
-const validateTransferInputs = (cardNumber, statement, amount, pin) => {
+const validateTransferInputs = (cardNumber, amount, pin) => {
     const cardNumberValue = cardNumber.value.trim();
     const amountValue = amount.value.trim();
     const pinValue = pin.value.trim();
 
-    // Validate the card number input
     if (cardNumberValue === '') {
         setError(cardNumber, 'Card Number is required.');
     } else if (!/^\d{4}-\d{4}-\d{4}-\d{4}$/.test(cardNumberValue)) {
         setError(cardNumber, 'Card Number must be in the format 0000-0000-0000-0000.');
     } else {
-        clearError(cardNumber);
+        setSuccess(cardNumber);
     }
 
-    // Validate the amount input
     if (amountValue === '') {
         setError(amount, 'Amount is required.');
     } else if (isNaN(amountValue) || parseFloat(amountValue) <= 0) {
@@ -80,29 +74,18 @@ const validateTransferInputs = (cardNumber, statement, amount, pin) => {
     } else if (amount > 9999999) {
         setError(amount, 'Amount cannot exceed 9.999.999');
     } else {
-        clearError(amount);
+        setSuccess(amount);
     }
 
-    
-
-    // Validate the PIN input
     if (pinValue === '') {
         setError(pin, 'PIN Code is required.');
     } else if (!/^\d{4}$/.test(pinValue)) {
         setError(pin, 'PIN Code must be a 4-digit number.');
     } else {
-        clearError(pin);
+        setSuccess(pin);
     }
 }
 
-const clearError = (element) => {
-    const errorElement = element.nextElementSibling;
-    if (errorElement) {
-        errorElement.innerText = '';
-        element.classList.remove('error'); // Removes the 'error' class if no error
-    }
-};
-
-import { setError } from "./formUtils.js";
+import { setError, setSuccess } from "./formUtils.js";
 import { loadContent } from "./contentLoading.js";
 import { checkSessionAndLoadHeader } from "./header.js";
