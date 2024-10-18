@@ -13,8 +13,10 @@ $response = [
     'errors' => []
 ];
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     handlePostRequest($connection, $response);
+} else {
+    $response['errors']['general'] = 'Invalid request method.';
 }
 
 echo json_encode($response);
@@ -53,11 +55,15 @@ function processEditPersonalInfo($connection, $newName, $newEmail, &$response) {
     $stmt->bind_param("ssi", $newName, $newEmail, $userId);
     $stmt->execute();
 
-    if ($stmt->affected_rows > 0) {
-        $response['success'] = true;
-    } else {
+    if ($stmt->errno) {
         $response['errors']['general'] = 'An error occurred while updating your personal information. Please try again later.';
+    } elseif ($stmt->affected_rows === 0) {
+        $response['success'] = true;
+        $response['message'] = 'No changes were made, as the information is already up to date.';
+    } else {
+        $response['success'] = true;
     }
 
     $stmt->close();
 }
+

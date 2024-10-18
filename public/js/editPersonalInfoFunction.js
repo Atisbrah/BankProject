@@ -36,18 +36,17 @@ export const editPersonalInfo = () => {
             body: formData
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to edit personal information.');
-            }
-            return response.json();
+            return response.json();  // Visszaalakítjuk a JSON választ
         })
         .then(data => {
+            console.log('Server response:', data);
             if (data.success) {
                 alert('Personal information changed successfully.');
                 checkSessionAndLoadHeader();
                 loadContent('randomQuote.php');      
             } else {
                 if (data.errors) {
+                    console.error(data.errors);
                     if (data.errors.authorization) {
                         alert(data.errors.authorization);
                     }
