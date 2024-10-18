@@ -2,7 +2,6 @@ export const editPersonalInfo = () => {
     const editPersonalInfoForm = document.getElementById('editPersonalInfoForm');
     if (!editPersonalInfoForm) return;
 
-    // Betöltjük a felhasználó adatait az input mezőkbe
     fetch('api/getPersonalInfo.php')
         .then(response => response.json())
         .then(data => {
@@ -36,7 +35,7 @@ export const editPersonalInfo = () => {
             body: formData
         })
         .then(response => {
-            return response.json();  // Visszaalakítjuk a JSON választ
+            return response.json();
         })
         .then(data => {
             console.log('Server response:', data);
