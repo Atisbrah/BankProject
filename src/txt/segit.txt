@@ -65,6 +65,7 @@ Véletlenszerű adatok a táblákhoz:
 user:
 
 INSERT INTO `user` (`name`, `email`, `password`, `authority`) VALUES
+('Admin', 'admin@admin.hu', '$2y$10$.7rK2ilUqIPQmwbv/i1pUeXBzj02jQTpkEe/wPo1fowvsw8CVBlHq', 2),
 ('John Doe', 'john.doe1@example.com', '$2y$10$abcdfg1234567890', 1),
 ('Jane Smith', 'jane.smith2@example.com', '$2y$10$hijklmnop1234567', 1),
 ('Peter Parker', 'peter.parker3@example.com', '$2y$10$qwertyuiop123456', 0),
@@ -97,7 +98,3 @@ INSERT INTO `card` (`cardnumber`, `user_id`, `balance`, `pin`, `status`, `priori
 ('2222-4444-6666-8888', '12', 16000, '$2y$10$lkjhgfdsaqwertyui', 0, 1),
 ('3333-5555-7777-9999', '13', 8000, '$2y$10$oiuytrewqlkjhgfds', 2, 2),
 ('4444-6666-8888-0000', '14', 18000, '$2y$10$qazwsxedcrfvtgby', 1, 1);
-
-
-
-A felhasználó név és email input már majdnem jó, a submit gomb nem küldi el az adatokat.
